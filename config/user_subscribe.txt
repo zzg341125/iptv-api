@@ -25,3 +25,4 @@ https://freetv.fun/test_channels_macau.txt
 https://freetv.fun/test_channels_macau_new.m3u
 https://freetv.fun/test_channels_macau.m3u
 https://freetv.fun/test_channels.m3u
+https://raw.githubusercontent.com/lalifeier/IPTV/main/txt/IPTV.txt
