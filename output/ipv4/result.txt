@@ -1,7 +1,8 @@
 🕘️更新时间,#genre#
-2026-07-16 07:10:58,http://satellitepull.cnr.cn/live/wx32hunws/playlist.m3u8
+2026-07-16 19:53:01,https://live-play-hls.cctvnews.cctv.com/CCTVChannel/channel_cctv4_mbd.m3u8?auth_key=1784253600-1-b59134a2ead43d7f783f943c8f535e7bb80c5169575b2e8efcd5b3ddea21b41c-959f66ebd62b57b77f67a98ccd85918e&yid=b59134a2ead43d7f783f943c8f535e7bb80c5169575b2e8efcd5b3ddea21b41c
 
 📺央视频道,#genre#
+CCTV-4,https://live-play-hls.cctvnews.cctv.com/CCTVChannel/channel_cctv4_mbd.m3u8?auth_key=1784253600-1-b59134a2ead43d7f783f943c8f535e7bb80c5169575b2e8efcd5b3ddea21b41c-959f66ebd62b57b77f67a98ccd85918e&yid=b59134a2ead43d7f783f943c8f535e7bb80c5169575b2e8efcd5b3ddea21b41c
 
 💰央视付费频道,#genre#
 
@@ -66,6 +67,7 @@
 ☘️湖北频道,#genre#
 
 ☘️广西频道,#genre#
+北海新闻综合,https://live.gxrb.com.cn/gx/beihai/index.m3u8
 南宁新闻综合,rtmp://tv.qntv.net/channellive/ch1?zguizd
 来宾综合,http://zb.gxlbamc.com:1935/live/lbzh.stream/playlist.m3u8
 
@@ -122,10 +124,10 @@
 嘉峪关综合,rtsp://221.7.61.147/PLTV/88888910/224/3221225607/10000100000000060000000000789667_0.smil
 嘉峪关综合,rtsp://116.176.26.19/PLTV/88888910/224/3221225607/10000100000000060000000000789667_0.smil
 嘉峪关综合,rtsp://60.13.39.18/PLTV/88888910/224/3221225607/10000100000000060000000000789667_0.smil
+天祝综合,https://play.kankanlive.com/live/1656487214793905.m3u8
 平凉新闻综合,http://play.kankanlive.com/live/1720583434627241.m3u8
 永昌综合,rtmp://play.kankanlive.com/live/1652755738635915
 永昌综合,https://play.kankanlive.com/live/1652755738635915.m3u8
-渭源新闻,http://play.kankanlive.com/live/1720408280309109.m3u8
 白银综合,http://play.kankanlive.com/live/1720408089419110.m3u8
 秦安综合,rtmp://play.kankanlive.com/live/1680577080200944
 秦安综合,http://play.kankanlive.com/live/1683944827526991.m3u8
