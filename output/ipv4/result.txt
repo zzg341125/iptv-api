@@ -1,5 +1,5 @@
 🕘️更新时间,#genre#
-2026-08-15 06:36:12,https://live-play-hls.cctvnews.cctv.com/CCTVChannel/channel_cctv4_mbd.m3u8?auth_key=1786798800-1-b59134a2ead43d7f783f943c8f535e7bb80c5169575b2e8efcd5b3ddea21b41c-7fe1d7b6953e48294026631b539bd4f2&yid=b59134a2ead43d7f783f943c8f535e7bb80c5169575b2e8efcd5b3ddea21b41c
+2026-08-15 18:35:58,https://live-play-hls.cctvnews.cctv.com/CCTVChannel/channel_cctv4_mbd.m3u8?auth_key=1786798800-1-b59134a2ead43d7f783f943c8f535e7bb80c5169575b2e8efcd5b3ddea21b41c-7fe1d7b6953e48294026631b539bd4f2&yid=b59134a2ead43d7f783f943c8f535e7bb80c5169575b2e8efcd5b3ddea21b41c
 
 📺央视频道,#genre#
 CCTV-4,https://live-play-hls.cctvnews.cctv.com/CCTVChannel/channel_cctv4_mbd.m3u8?auth_key=1786798800-1-b59134a2ead43d7f783f943c8f535e7bb80c5169575b2e8efcd5b3ddea21b41c-7fe1d7b6953e48294026631b539bd4f2&yid=b59134a2ead43d7f783f943c8f535e7bb80c5169575b2e8efcd5b3ddea21b41c
@@ -32,7 +32,6 @@ CCTV-4,https://live-play-hls.cctvnews.cctv.com/CCTVChannel/channel_cctv4_mbd.m3u
 金山电视台,https://pili-live-hls.wdit.com.cn/wditlive/8818dfe5f4df45ba9a3f32964d172fb2b6d3.m3u8
 
 ☘️重庆频道,#genre#
-璧山综合,http://222.179.42.129:8181/hls1.m3u8
 铜梁综合,http://183.64.174.171:40123/ch1.m3u8?zzhongqd
 重庆汽摩,http://183.230.184.51:65500/tntv1.m3u8?zzhongqd
 荣昌综合,http://183.64.181.25:40023/rongchang01.m3u8?%E5%85%B3%E6%B3%A8%E5%BE%AE%E4%BF%A1%E5%85%AC%E4%BC%97%E5%8F%B7[%E6%99%B4%E5%9B%AD]
@@ -48,8 +47,8 @@ CCTV-4,https://live-play-hls.cctvnews.cctv.com/CCTVChannel/channel_cctv4_mbd.m3u
 扬州邗江,https://cm-wshls.homecdn.com/live/8c3.m3u8
 武进新闻,http://live.wjyanghu.com/live/CH1.m3u8?%E5%85%B3%E6%B3%A8%E5%BE%AE%E4%BF%A1%E5%85%AC%E4%BC%97%E5%8F%B7[%E6%99%B4%E5%9B%AD]
 武进新闻,https://live.wjyanghu.com/live/CH1.m3u8?%E5%85%B3%E6%B3%A8%E5%BE%AE%E4%BF%A1%E5%85%AC%E4%BC%97%E5%8F%B7[%E6%99%B4%E5%9B%AD]
-武进生活,http://live.wjyanghu.com/live/CH2.m3u8
 武进生活,https://live.wjyanghu.com/live/CH2.m3u8?%E5%85%B3%E6%B3%A8%E5%BE%AE%E4%BF%A1%E5%85%AC%E4%BC%97%E5%8F%B7[%E6%99%B4%E5%9B%AD]
+武进生活,http://live.wjyanghu.com/live/CH2.m3u8
 涟水综合,rtmp://lianshui-tv-hls.cm.jstv.com/lianshui-tv/lsxw
 睢宁综合,rtmp://221.229.243.45:1935/live/live1
 睢宁综合,https://live-auth.51kandianshi.com/szgd/csztv4k_hd.m3u8
@@ -80,15 +79,12 @@ CCTV-4,https://live-play-hls.cctvnews.cctv.com/CCTVChannel/channel_cctv4_mbd.m3u
 凉山新闻综合,rtmp://tv.drs.yizu.tv/channellive/ch1?zsicd
 凉山语,rtmp://tv.drs.i0834.cn/channellive/ch2?zsicd
 凉山语,rtmp://tv.drs.yizu.tv/channellive/ch2?zsicd
-剑阁综合,https://m3u8.channel.dzsm.com/nmip-media/channellive/channel105549/playlist.m3u8
 名山综合,rtmp://tv.yunxya.com:1937/channellive/mingshan
-夹江新闻综合,https://m3u8.channel.dzsm.com/nmip-media/channellive/channel101257/playlist.m3u8
 夹江新闻综合,rtmp://tv.jjrm.org.cn/channellive/ch1?zsicd
 宝兴综合,rtmp://tv.yunxya.com:1937/channellive/baoxing
 小金综合,rtmp://xjlive.xjxrmt.cn/live/xwpd
 广安公共,http://live1.gatv.com.cn:85/live/GGPD_ggpdzm.m3u8?zsicd
 旺苍新闻综合,rtmp://tv.wcrmt.cn/channellive/ch1
-朝天综合,https://m3u8.channel.dzsm.com/nmip-media/channellive/channel104601/playlist.m3u8
 沐川综合,rtmp://tv.mcrm.org.cn:1935/channellive/tv01
 石棉综合,rtmp://tv.yunxya.com:1937/channellive/shimian
 荥经综合,rtmp://tv.yunxya.com:1937/channellive/yingjing
@@ -134,8 +130,8 @@ CCTV-4,https://live-play-hls.cctvnews.cctv.com/CCTVChannel/channel_cctv4_mbd.m3u
 伊犁维吾尔,http://110.153.180.106:55555/out_2/index.m3u8?zxinjd
 伊犁哈萨克,http://110.153.180.106:55555/out_3/index.m3u8?zxinjd
 伊犁经济法制,http://110.153.180.106:55555/out_4/index.m3u8?zxinjd
-兵团五师双河新闻综合,http://liveout.btzx.com.cn/62ds9e/4nxdih.m3u8?fbl=
 兵团五师双河新闻综合,https://liveout.btzx.com.cn/62ds9e/4nxdih.m3u8?zxinjd
+兵团五师双河新闻综合,http://liveout.btzx.com.cn/62ds9e/4nxdih.m3u8?fbl=
 玛纳斯综合,http://218.84.127.245:1026/hls/main1/playlist.m3u8?zxinjd,
 可克达拉综合,http://file.loulannews.cn/nmip-media/channellive/channel103824/playlist.m3u8
 奎屯汉语综合,http://218.84.12.186:8001/hls/main/playlist.m3u8?zxinjd;http://218.84.12.186:8001/hls/main/playlist.m3u8zxinjd
@@ -155,6 +151,7 @@ CCTV-4,https://live-play-hls.cctvnews.cctv.com/CCTVChannel/channel_cctv4_mbd.m3u
 闻喜综合,https://www.wxhcgbds.com:8081/channelTv/WXTV_1.m3u8?zshanxd
 
 ☘️安徽频道,#genre#
+合肥新闻,http://112.27.235.94:8000/hls/18/index.m3u8
 固镇新闻,http://www.guzhenm.com:7001/hls/hd-live.m3u8?%E5%85%B3%E6%B3%A8%E5%BE%AE%E4%BF%A1%E5%85%AC%E4%BC%97%E5%8F%B7[%E6%99%B4%E5%9B%AD]
 祁门综合,rtmp://tv.qmxrmt.com/chan/ch1?zanhd#rtmp://tv.qmxrmt.com/chan/ch1
 灵璧综合,http://live.cms.anhuinews.com/video/s10003-lbtv/index.m3u8?zanhd#http://live.cms.anhuinews.com/video/s10003-lbtv/index.m3u8
@@ -198,6 +195,7 @@ CCTV-4,https://live-play-hls.cctvnews.cctv.com/CCTVChannel/channel_cctv4_mbd.m3u
 哈尔滨娱乐,http://stream.hrbtv.net/ylpd/sd/live.m3u8?zheild#http://stream.hrbtv.net/ylpd/sd/live.m3u8#https://stream.hrbtv.net/ylpd/sd/live.m3u8
 七台河新闻综合,http://live.qthnews.org.cn:1935/live/live1/800k/tzwj_video.m3u8
 甘南县综合,https://stream.hrbtv.net/zxpd/sd/live.m3u8
+甘南县综合,http://kkk.jjjj.jiduo.me/api.php?n=tttt&id=9bdb37&tk=6949f8ce7202
 甘南县综合,rtmp://masterpull.hljtv.com/live/YbFyF4Jb
 七台河民生社教,http://live.qthnews.org.cn:1935/live/live2/800k/tzwj_video.m3u8
 
