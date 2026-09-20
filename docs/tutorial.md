@@ -23,10 +23,10 @@
 
 ## 工作流部署
 
-使用 GitHub Actions 手动生成结果，通过 Fork 仓库自己的 GitHub Pages 提供播放器订阅，并同步保留固定 Release 供下载和保存结果文件。
+使用 GitHub Actions 手动生成结果，通过 Fork 仓库自己的 GitHub Pages 提供播放器订阅，并为每次运行创建独立的 Release，供下载和保存结果文件。
 
 > [!IMPORTANT]
-> GitHub Actions 资源有限，工作流只能手动触发。生成结果通过 Pages Artifact 和 `playlist-latest` 预发布版发布，不会提交到 Git，也不会创建 `gh-pages` 分支。
+> GitHub Actions 资源有限，工作流只能手动触发。生成结果通过 Pages Artifact 和每次运行独立的预发布版发布，不会提交到 Git，也不会创建 `gh-pages` 分支。
 > 如果需要频繁更新或定时执行，请使用 Docker、命令行、GUI 或外部对象存储。
 
 ### 进入IPTV-API项目
@@ -261,7 +261,7 @@ https://example.com/sub2.m3u UA="Mozilla/5.0 xxx"
 
 ![Workflow执行成功](./images/workflow-success.png 'Workflow执行成功')
 
-此时可以在工作流页面的 Summary 查看 Pages 链接和 Release 下载地址。播放器请直接使用 Pages 链接：
+此时可以在工作流页面的 Summary 查看 Pages 链接和 Release 下载地址。播放器请使用 Pages 链接：
 
 ```text
 https://您的GitHub用户名.github.io/仓库名/result.m3u
@@ -269,13 +269,17 @@ https://您的GitHub用户名.github.io/仓库名/result.txt
 https://您的GitHub用户名.github.io/仓库名/epg.gz
 ```
 
-Release 下载地址仍会同步更新。由于存在重定向和下载响应头，建议用它下载和保存结果文件，不要直接作为播放器订阅地址：
+每次运行都会创建并保留独立的预发布版，工作流 Summary 和 Pages 页面会提供本次 Release 的入口。Release 标题和标签时间来自 `config.ini` 的 `time_zone`；默认时区下的标题示例为 `Generated playlist · 2026-09-20 10:30:00 (Asia/Shanghai)`。由于存在重定向和下载响应头，建议用它下载和保存结果文件，不要作为播放器订阅地址。附件下载地址格式如下：
 
 ```text
-https://github.com/您的GitHub用户名/仓库名/releases/download/playlist-latest/result.m3u
+https://github.com/您的GitHub用户名/仓库名/releases/download/playlist-20260920-103000-utc-plus-0800/result.m3u
 ```
 
 `result.txt` 始终发布；`result.m3u` 和 `epg.gz` 仅在对应功能开启且成功生成时存在。M3U 内的 EPG 地址使用 Pages 链接。
+
+Pages 结果页中的“复制链接”始终复制播放器可使用的原始文件地址；“预览内容”通过站内预览页强制按 UTF-8 解码，避免浏览器直接打开 M3U 时因响应缺少字符集而显示乱码。`epg.gz` 是压缩文件，只提供原始文件入口。
+
+Release 和 Fork 跳转地址均从运行工作流的仓库信息生成：主仓库页面指向 `Guovin/iptv-api`，Fork 仓库页面指向该用户自己的 Fork；只有主仓库的测试提示提供返回主仓库 Fork 创建页的入口。
 
 ![用户名与仓库名称](./images/rep-info.png '用户名与仓库名称')
 
@@ -283,10 +287,11 @@ https://github.com/您的GitHub用户名/仓库名/releases/download/playlist-la
 等播放器配置栏中即可使用~
 
 > [!NOTE]\
-> 1. 如果您修改了模板或配置文件，可再次手动触发 `Run workflow`，Pages 和 Release 固定地址保持不变。
+> 1. 如果您修改了模板或配置文件，可再次手动触发 `Run workflow`。Pages 地址保持不变，每次运行会创建新的预发布版并保留历史附件及其下载量。
 > 2. `open_history` 在 Actions 中仅尝试从短期缓存恢复，缓存失效时会执行无历史的完整生成。
 > 3. `open_auto_disable_source` 对配置文件的修改不会提交回仓库；需要持久保存时请使用其他部署方式。
 > 4. Pages 使用临时 Artifact 部署，不会向 Git 写入生成结果；请勿自行改为提交 `gh-pages` 分支。
+> 5. 播放列表结果继续使用预发布版，避免占用正式版的 Latest 标识或干扰 GUI 正式版本发布与更新检查。
 
 ### 从旧工作流迁移
 
@@ -294,7 +299,7 @@ https://github.com/您的GitHub用户名/仓库名/releases/download/playlist-la
 2. 在 Actions 中禁用含 `schedule` 的旧工作流，不要再让它提交 `output/`。
 3. 通过 `Sync fork` → `Update branch` 同步新版；若必须使用 `Discard commits`，请先完成第 1 步。
 4. 在 `Settings → Pages` 中将发布源设置为 `GitHub Actions`。
-5. 手动运行 `Generate playlist manually`，确认 Pages 部署和 `playlist-latest` 预发布版均已生成。
+5. 手动运行 `Generate playlist manually`，确认 Pages 部署和本次运行对应的预发布版均已生成。
 6. 将播放器中的旧 raw 或 Release 链接替换为 Summary 中的 Pages 链接。旧 raw 链接只保留最后一次结果，不再更新。
 
 ## 命令行

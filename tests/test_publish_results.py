@@ -3,10 +3,12 @@ import json
 import os
 import tempfile
 import unittest
+from datetime import datetime, timezone
 from pathlib import Path
 from unittest.mock import patch
 
 from scripts.publish_results import (
+    build_release_metadata,
     prepare_pages_site,
     prepare_release_assets,
 )
@@ -29,6 +31,21 @@ class PublishResultsTests(unittest.TestCase):
         path.write_bytes(content)
         return path
 
+    def test_builds_readable_release_metadata_in_configured_time_zone(self):
+        metadata = build_release_metadata(
+            "Asia/Shanghai",
+            now=datetime(2026, 9, 20, 2, 30, tzinfo=timezone.utc),
+        )
+
+        self.assertEqual(
+            metadata,
+            {
+                "tag": "playlist-20260920-103000-utc-plus-0800",
+                "title": "Generated playlist · 2026-09-20 10:30:00 (Asia/Shanghai)",
+                "generated_at": "2026-09-20T10:30:00+08:00",
+            },
+        )
+
     def test_prepares_only_canonical_public_assets_and_checksums(self):
         self._write("custom/user_result.txt", b"Demo,http://example.com\n")
         self._write("custom/user_result.m3u", b"#EXTM3U\n")
@@ -45,6 +62,7 @@ class PublishResultsTests(unittest.TestCase):
             repository="owner/repository",
             source_sha="abc123",
             workflow_run_id="42",
+            release_tag="playlist-20260920-103000-utc-plus-0800",
         )
 
         self.assertEqual(
@@ -60,6 +78,10 @@ class PublishResultsTests(unittest.TestCase):
         )
         self.assertEqual(manifest["repository"], "owner/repository")
         self.assertEqual(manifest["generated_at"], "2026-09-08T00:00:00+00:00")
+        self.assertEqual(
+            manifest["release_tag"],
+            "playlist-20260920-103000-utc-plus-0800",
+        )
         manifest_file = json.loads((destination / "manifest.json").read_text(encoding="utf-8"))
         self.assertEqual(manifest_file, manifest)
         result_digest = hashlib.sha256((destination / "result.txt").read_bytes()).hexdigest()
@@ -97,9 +119,27 @@ class PublishResultsTests(unittest.TestCase):
     def test_prepares_pages_site_with_pages_links(self):
         assets = self.workspace / "release-assets"
         assets.mkdir()
-        (assets / "result.txt").write_text("Demo,http://example.com\n", encoding="utf-8")
-        (assets / "result.m3u").write_text("#EXTM3U\n", encoding="utf-8")
-        (assets / "epg.gz").write_bytes(b"gzip-data")
+        asset_contents = {
+            "result.txt": b"Demo,http://example.com\n",
+            "result.m3u": b"#EXTM3U\n",
+            "ipv4.txt": b"IPv4,http://example.com\n",
+            "ipv4.m3u": b"#EXTM3U\n",
+            "ipv6.txt": b"IPv6,http://example.com\n",
+            "ipv6.m3u": b"#EXTM3U\n",
+            "epg.gz": b"gzip-data",
+            "epg.xml": b"<tv></tv>",
+            "SHA256SUMS.txt": b"checksums\n",
+        }
+        for name, content in asset_contents.items():
+            (assets / name).write_bytes(content)
+        (assets / "manifest.json").write_text(
+            json.dumps({
+                "generated_at": "2026-09-20T12:00:00+00:00",
+                "repository": "owner/repository",
+                "release_tag": "playlist-20260920-200000-utc-plus-0800",
+            }),
+            encoding="utf-8",
+        )
 
         site = self.workspace / "pages-site"
         result = prepare_pages_site(
@@ -110,13 +150,118 @@ class PublishResultsTests(unittest.TestCase):
 
         self.assertEqual(
             {path.name for path in site.iterdir()},
-            {"result.txt", "result.m3u", "epg.gz", "index.html"},
+            {
+                *asset_contents,
+                "manifest.json",
+                "favicon.svg",
+                "index.html",
+                "viewer.html",
+            },
         )
         self.assertEqual(result["pages_base_url"], "https://owner.github.io/repository")
         index = (site / "index.html").read_text(encoding="utf-8")
-        self.assertIn("GitHub Pages 链接 / Pages links", index)
-        self.assertIn("https://owner.github.io/repository/result.m3u", index)
+        for name in (*asset_contents, "manifest.json"):
+            self.assertIn(f"https://owner.github.io/repository/{name}", index)
+        self.assertIn("完整结果 / All networks", index)
+        self.assertIn("IPv4 结果 / IPv4 only", index)
+        self.assertIn("IPv6 结果 / IPv6 only", index)
+        self.assertIn("节目单 / Programme guide", index)
+        self.assertIn("发布信息 / Publication details", index)
+        self.assertIn("下载保存 / Download &amp; Save", index)
+        self.assertNotIn("Download &amp; save", index)
+        self.assertIn(
+            "https://github.com/owner/repository/releases/tag/playlist-20260920-200000-utc-plus-0800",
+            index,
+        )
+        self.assertNotIn("https://github.com/Guovin/iptv-api/releases", index)
+        self.assertIn('class="inline-release-link"', index)
+        self.assertIn('aria-label="打开 owner/repository Release">Release</a>', index)
+        self.assertNotIn(">owner/repository Release</a>", index)
+        self.assertIn("2026-09-20T12:00:00+00:00", index)
+        self.assertIn('<link rel="icon" href="favicon.svg" type="image/svg+xml">', index)
+        self.assertIn('class="brand-mark" src="favicon.svg"', index)
+        self.assertEqual(index.count('class="card-action copy-action"'), 10)
+        self.assertEqual(index.count('target="_blank" rel="noopener noreferrer"'), 11)
+        self.assertIn(
+            'href="https://owner.github.io/repository/viewer.html?file=result.m3u"',
+            index,
+        )
+        self.assertIn(
+            'href="https://owner.github.io/repository/epg.gz"',
+            index,
+        )
+        viewer = (site / "viewer.html").read_text(encoding="utf-8")
+        self.assertIn('new TextDecoder("utf-8").decode(buffer)', viewer)
+        self.assertIn("文件不存在或不支持浏览器预览。\\nThe file", viewer)
+        self.assertIn('"result.m3u"', viewer)
+        self.assertNotIn('"epg.gz"', viewer)
+        self.assertIn('navigator.clipboard.writeText(value)', index)
+        self.assertIn('已复制 / Copied', index)
+        self.assertIn('role="status" aria-live="polite"', index)
+        self.assertIn('.hero-copy [lang="en"] { display: block;', index)
+        self.assertIn(
+            "grid-template-columns: repeat(2, minmax(0, 1fr))",
+            index,
+        )
+        self.assertIn('@media (max-width: 980px)', index)
+        self.assertNotIn("结果已发布 / Results published", index)
+        self.assertNotIn("secondary-action", index)
+        self.assertNotIn("border: 1px solid rgba(255, 255, 255, 0.42)", index)
+        self.assertNotIn("仅供测试 / Test only", index)
+        self.assertNotIn("fonts.googleapis.com", index)
         self.assertNotIn("CDN accelerated links", index)
+
+    def test_pages_site_marks_upstream_results_as_test_only(self):
+        assets = self.workspace / "release-assets"
+        assets.mkdir()
+        (assets / "result.txt").write_text("Demo,http://example.com\n", encoding="utf-8")
+        (assets / "manifest.json").write_text(
+            json.dumps({
+                "repository": "Guovin/iptv-api",
+                "release_tag": "playlist-20260920-200100-utc-plus-0800",
+            }),
+            encoding="utf-8",
+        )
+
+        site = self.workspace / "pages-site"
+        prepare_pages_site(
+            assets_directory=assets,
+            destination=site,
+            pages_base_url="https://guovin.github.io/iptv-api",
+        )
+
+        index = (site / "index.html").read_text(encoding="utf-8")
+        self.assertIn("仅供测试 / Test only", index)
+        self.assertIn("主仓库发布的 Pages 链接和 Release 结果仅用于功能测试", index)
+        self.assertIn(
+            "https://github.com/Guovin/iptv-api/releases/tag/playlist-20260920-200100-utc-plus-0800",
+            index,
+        )
+        self.assertEqual(
+            index.count('href="https://github.com/Guovin/iptv-api/fork"'),
+            2,
+        )
+        self.assertIn(">Fork 项目</a>", index)
+        self.assertIn(">Fork the project</a>", index)
+
+    def test_pages_site_omits_unavailable_optional_results(self):
+        assets = self.workspace / "release-assets"
+        assets.mkdir()
+        (assets / "result.txt").write_text("Demo,http://example.com\n", encoding="utf-8")
+
+        site = self.workspace / "pages-site"
+        prepare_pages_site(
+            assets_directory=assets,
+            destination=site,
+            pages_base_url="https://owner.github.io/repository",
+        )
+
+        index = (site / "index.html").read_text(encoding="utf-8")
+        self.assertIn("https://owner.github.io/repository/result.txt", index)
+        self.assertNotIn("IPv4 结果 / IPv4 only", index)
+        self.assertNotIn("IPv6 结果 / IPv6 only", index)
+        self.assertNotIn("节目单 / Programme guide", index)
+        self.assertNotIn("发布信息 / Publication details", index)
 
     def test_rejects_invalid_pages_url(self):
         with self.assertRaisesRegex(ValueError, "absolute HTTP"):
@@ -151,11 +296,33 @@ class PublishWorkflowTests(unittest.TestCase):
         self.assertIn("contents: write", workflow)
         self.assertIn("pages: write", workflow)
         self.assertIn("id-token: write", workflow)
-        self.assertIn("playlist-latest", workflow)
+        self.assertIn("build_release_metadata(config.time_zone)", workflow)
         self.assertIn("scripts/publish_results.py", workflow)
         self.assertIn("actions/configure-pages@v5", workflow)
         self.assertIn("actions/upload-pages-artifact@v4", workflow)
         self.assertIn("actions/deploy-pages@v4", workflow)
+        self.assertIn('release_title="$RELEASE_TITLE (test only)"', workflow)
+        self.assertIn("pages_base_url: ${{ steps.generate.outputs.pages_base_url }}", workflow)
+        self.assertIn("release_title: ${{ steps.release.outputs.title }}", workflow)
+        self.assertIn("PAGES_BASE: ${{ needs.generate.outputs.pages_base_url }}", workflow)
+        self.assertIn("RELEASE_TAG: ${{ needs.generate.outputs.release_tag }}", workflow)
+        self.assertIn("RELEASE_TITLE: ${{ needs.generate.outputs.release_title }}", workflow)
+        self.assertIn(
+            "name: playlist-release-assets-${{ steps.release.outputs.tag }}",
+            workflow,
+        )
+        self.assertIn(
+            "name: playlist-release-assets-${{ needs.generate.outputs.release_tag }}",
+            workflow,
+        )
+        self.assertNotIn("github.run_attempt", workflow)
+        self.assertIn("[Open Pages result links / 打开 Pages 结果页]($PAGES_BASE)", workflow)
+        self.assertIn("[Open Pages test result links / 打开 Pages 测试结果页]($PAGES_BASE)", workflow)
+        self.assertNotIn("gh release edit", workflow)
+        self.assertNotIn("gh release upload", workflow)
+        self.assertNotIn("--clobber", workflow)
+        self.assertIn("--generated-at", workflow)
+        self.assertIn("--prerelease", workflow)
         self.assertNotIn("gh-pages", workflow)
         self.assertNotIn("--cdn-url", workflow)
         self.assertNotIn("public_base_url", workflow)

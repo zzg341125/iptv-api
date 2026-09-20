@@ -241,18 +241,18 @@ iptv-api/                  # 项目根目录
 ### 工作流
 
 > [!WARNING]
-> GitHub Actions 仅支持低频手动生成，结果通过 Pages Artifact 和固定的 `playlist-latest` 预发布版发布，不再提交到 Git。
+> GitHub Actions 仅支持低频手动生成，结果通过 Pages Artifact 和每次运行独立的预发布版发布，不再提交到 Git。
 > 旧的 `raw.githubusercontent.com/.../output/...` 链接不再更新；需要定时执行时请使用 Docker、命令行或 GUI。
 
 Fork 本项目后，先在 `Settings → Pages` 中将发布源设置为 `GitHub Actions`，再手动运行
-`Generate playlist manually`。播放器请直接使用 Pages 链接订阅，Release 地址用于下载和保存结果文件，整个过程不会产生 Git 提交。
+`Generate playlist manually`。播放器请使用 Pages 链接订阅，Release 地址用于下载和保存结果文件，整个过程不会产生 Git 提交。
 
 ```text
 https://您的GitHub用户名.github.io/仓库名/result.m3u
 https://您的GitHub用户名.github.io/仓库名/result.txt
 ```
 
-工作流 Summary 提供 Pages 链接和 Release 下载地址；`cdn_url` 不用于包装 `github.io` 发布地址。
+工作流 Summary 提供 Pages 链接和本次运行的 Release 下载地址；独立预发布版使用 `config.ini` 的 `time_zone` 生成可读时间名称，历史版本会保留，便于分别查看附件下载量。`cdn_url` 不用于包装 `github.io` 发布地址。
 
 迁移和完整操作步骤请见[详细教程](./docs/tutorial.md#工作流部署)。
 

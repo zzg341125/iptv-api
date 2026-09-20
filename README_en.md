@@ -243,22 +243,23 @@ iptv-api/                  # Project root directory
 ### Workflow
 
 > [!WARNING]
-> GitHub Actions is intended only for occasional manual generation. Results are published to the fixed
-> `playlist-latest` prerelease and through a Pages artifact, and are no longer committed to Git. Legacy
+> GitHub Actions is intended only for occasional manual generation. Results are published through a Pages artifact
+> and a separate prerelease for every run, and are no longer committed to Git. Legacy
 > `raw.githubusercontent.com/.../output/...` URLs no longer update. Use Docker, the command line, or the GUI for
 > scheduled runs.
 
-After forking, select `GitHub Actions` under `Settings → Pages`, then manually run `Generate playlist manually`. Pages
-Players should subscribe with the Pages links, while the Release URLs are intended for downloading and saving result files. Neither path
-creates Git commits.
+After forking, select `GitHub Actions` under `Settings → Pages`, then manually run `Generate playlist manually`.
+Players should subscribe with the Pages links, while the Release URLs are intended for downloading and saving result
+files. Neither path creates Git commits.
 
 ```text
 https://your-github-username.github.io/repository-name/result.m3u
 https://your-github-username.github.io/repository-name/result.txt
 ```
 
-The workflow summary provides Pages links and Release download URLs. `cdn_url` is not used to wrap
-published `github.io` URLs.
+The workflow summary provides Pages links and the current run's Release download URLs. Each prerelease uses a readable
+timestamp in the `time_zone` configured in `config.ini`. Historical prereleases are retained so their asset download
+counts remain available. `cdn_url` is not used to wrap published `github.io` URLs.
 
 See the [detailed tutorial](./docs/tutorial_en.md#workflow-deployment) for setup and migration steps.
 

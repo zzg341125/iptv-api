@@ -1,11 +1,11 @@
 name: Generate playlist manually
 
 # ⚠️注意：请不要在 fork 的仓库中添加 `on: schedule` 定时任务（cron）。
-# 生成结果只能通过 Pages Artifact、`playlist-latest` Release 或外部端点发布，不得提交回 Git。
+# 生成结果只能通过 Pages Artifact、每次运行独立的 Release 或外部端点发布，不得提交回 Git。
 # 如需要频繁更新或定时执行，请使用 Docker、命令行、GUI 或外部对象存储。
 #
 # ⚠️NOTICE: Do NOT add `on: schedule` cron triggers in forked repositories.
-# Publish generated results only through a Pages artifact, the `playlist-latest` release, or an external endpoint; never commit them to Git.
+# Publish generated results only through a Pages artifact, a per-run release, or an external endpoint; never commit them to Git.
 # Use Docker, the CLI, the GUI, or external object storage for frequent or scheduled runs.
 
 on:
@@ -28,6 +28,9 @@ jobs:
       id-token: write
     outputs:
       source_sha: ${{ steps.source.outputs.sha }}
+      pages_base_url: ${{ steps.generate.outputs.pages_base_url }}
+      release_tag: ${{ steps.release.outputs.tag }}
+      release_title: ${{ steps.release.outputs.title }}
     steps:
       - name: Checkout source and configuration
         uses: actions/checkout@v6
@@ -93,6 +96,16 @@ jobs:
           echo "pages_base_url=$pages_base_url" >> "$GITHUB_OUTPUT"
           IPTV_API_ARTIFACT_BASE_URL="$pages_base_url" pipenv run dev
 
+      - name: Create release metadata
+        id: release
+        run: |
+          mapfile -t release_metadata < <(
+            pipenv run python -c 'from scripts.publish_results import build_release_metadata; from utils.config import config; metadata = build_release_metadata(config.time_zone); print(metadata["tag"]); print(metadata["title"]); print(metadata["generated_at"])'
+          )
+          echo "tag=${release_metadata[0]}" >> "$GITHUB_OUTPUT"
+          echo "title=${release_metadata[1]}" >> "$GITHUB_OUTPUT"
+          echo "generated_at=${release_metadata[2]}" >> "$GITHUB_OUTPUT"
+
       - name: Prepare public release assets
         id: assets
         run: |
@@ -100,6 +113,8 @@ jobs:
           pipenv run python scripts/publish_results.py \
             --final-file "$final_file" \
             --destination release-assets \
+            --generated-at "${{ steps.release.outputs.generated_at }}" \
+            --release-tag "${{ steps.release.outputs.tag }}" \
             --pages-destination pages-site \
             --pages-base-url "${{ steps.generate.outputs.pages_base_url }}"
           echo "final_file=$final_file" >> "$GITHUB_OUTPUT"
@@ -109,10 +124,10 @@ jobs:
         with:
           path: pages-site
 
-      - name: Upload rolling release artifact
+      - name: Upload release artifact
         uses: actions/upload-artifact@v4
         with:
-          name: playlist-release-assets-${{ github.run_id }}
+          name: playlist-release-assets-${{ steps.release.outputs.tag }}
           path: release-assets
           if-no-files-found: error
           retention-days: 1
@@ -153,7 +168,7 @@ jobs:
       - name: Add subscription links to summary
         env:
           PAGES_BASE: ${{ steps.generate.outputs.pages_base_url }}
-          RELEASE_BASE: https://github.com/${{ github.repository }}/releases/download/playlist-latest
+          RELEASE_BASE: https://github.com/${{ github.repository }}/releases/download/${{ steps.release.outputs.tag }}
         run: |
           {
             echo "### Published playlist"
@@ -196,45 +211,41 @@ jobs:
       actions: read
       contents: write
     steps:
-      - name: Download rolling release artifact
+      - name: Download release artifact
         uses: actions/download-artifact@v4
         with:
-          name: playlist-release-assets-${{ github.run_id }}
+          name: playlist-release-assets-${{ needs.generate.outputs.release_tag }}
           path: release-assets
 
-      - name: Publish rolling playlist release
+      - name: Publish playlist release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          RELEASE_TAG: playlist-latest
+          PAGES_BASE: ${{ needs.generate.outputs.pages_base_url }}
+          RELEASE_TAG: ${{ needs.generate.outputs.release_tag }}
+          RELEASE_TITLE: ${{ needs.generate.outputs.release_title }}
           SOURCE_SHA: ${{ needs.generate.outputs.source_sha }}
         run: |
-          if ! gh release view "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
-            gh release create "$RELEASE_TAG" \
-              --repo "$GITHUB_REPOSITORY" \
-              --target "$SOURCE_SHA" \
-              --title "Latest generated playlist" \
-              --notes "Rolling, manually generated IPTV results. Assets are replaced by each successful run." \
-              --prerelease
+          release_title="$RELEASE_TITLE"
+          printf -v release_notes '%s\n\n%s\n\n%s' \
+            "Manually generated IPTV results for $GITHUB_REPOSITORY. This prerelease is retained with independent asset download counts." \
+            "手动生成的 IPTV 结果。此预发布版会保留，用于独立统计本次附件的下载量。" \
+            "[Open Pages result links / 打开 Pages 结果页]($PAGES_BASE)"
+          if [[ "$GITHUB_REPOSITORY" == "Guovin/iptv-api" ]]; then
+            release_title="$RELEASE_TITLE (test only)"
+            printf -v release_notes '%s\n\n%s\n\n%s\n\n%s' \
+              "Official repository Pages and Release results are for functional testing only. Content completeness, availability, and continued updates are not guaranteed. Fork the project and run your own workflow for actual use." \
+              "主仓库发布的 Pages 链接和 Release 结果仅用于功能测试，不保证内容完整性、可用性或持续更新。实际使用请 Fork 项目并运行自己的工作流。" \
+              "This prerelease is retained with independent asset download counts. / 此预发布版会保留，用于独立统计本次附件的下载量。" \
+              "[Open Pages test result links / 打开 Pages 测试结果页]($PAGES_BASE)"
           fi
 
           mapfile -d '' local_assets < <(find release-assets -maxdepth 1 -type f -print0 | sort -z)
-          gh release upload "$RELEASE_TAG" "${local_assets[@]}" \
+          gh release create "$RELEASE_TAG" "${local_assets[@]}" \
             --repo "$GITHUB_REPOSITORY" \
-            --clobber
-
-          mapfile -t remote_assets < <(
-            gh release view "$RELEASE_TAG" \
-              --repo "$GITHUB_REPOSITORY" \
-              --json assets \
-              --jq '.assets[].name'
-          )
-          for asset in "${remote_assets[@]}"; do
-            if [[ ! -f "release-assets/$asset" ]]; then
-              gh release delete-asset "$RELEASE_TAG" "$asset" \
-                --repo "$GITHUB_REPOSITORY" \
-                --yes
-            fi
-          done
+            --target "$SOURCE_SHA" \
+            --title "$release_title" \
+            --notes "$release_notes" \
+            --prerelease
 
           find release-assets -maxdepth 1 -type f -printf '%f\n' | sort > /tmp/local-assets.txt
           gh release view "$RELEASE_TAG" \
