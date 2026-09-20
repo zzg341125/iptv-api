@@ -17,13 +17,13 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/Guovin/iptv-api/releases/latest">
+  <a href="https://github.com/Guovin/iptv-api/releases/latest" target="_blank" rel="noopener noreferrer">
     <img src="https://img.shields.io/github/v/release/guovin/iptv-api?label=Version" />
   </a>
   <a href="https://www.python.org/">
     <img src="https://img.shields.io/badge/python-3.14-47c219?label=Python" />
   </a>
-  <a href="https://github.com/Guovin/iptv-api/releases/latest">
+  <a href="https://github.com/Guovin/iptv-api/releases/latest" target="_blank" rel="noopener noreferrer">
     <img src="https://img.shields.io/github/downloads/guovin/iptv-api/total?label=GUI%20Downloads" />
   </a>
   <a href="https://hub.docker.com/repository/docker/guovern/iptv-api">
@@ -32,7 +32,7 @@
   <a href="https://github.com/Guovin/iptv-api/stargazers">
     <img src="https://img.shields.io/github/stars/guovin/iptv-api?label=Stars" />
   </a>
-  <a href="https://github.com/Guovin/iptv-api/fork">
+  <a href="https://github.com/Guovin/iptv-api/fork" target="_blank" rel="noopener noreferrer">
     <img src="https://img.shields.io/github/forks/guovin/iptv-api?label=Forks" />
   </a>
 </p>
@@ -244,8 +244,8 @@ iptv-api/                  # 项目根目录
 > GitHub Actions 仅支持低频手动生成，结果通过 Pages Artifact 和每次运行独立的预发布版发布，不再提交到 Git。
 > 旧的 `raw.githubusercontent.com/.../output/...` 链接不再更新；需要定时执行时请使用 Docker、命令行或 GUI。
 
-Fork 本项目后，先在 `Settings → Pages` 中将发布源设置为 `GitHub Actions`，再手动运行
-`Generate playlist manually`。播放器请使用 Pages 链接订阅，Release 地址用于下载和保存结果文件，整个过程不会产生 Git 提交。
+<a href="https://github.com/Guovin/iptv-api/fork" target="_blank" rel="noopener noreferrer">Fork 本项目</a>后，先在 `Settings → Pages` 中将发布源设置为 `GitHub Actions`，再手动运行
+`Generate playlist manually`。播放器在线使用请打开 Pages 页面获取相应的结果地址。Release 地址用于下载和保存结果文件，整个过程不会产生 Git 提交。
 
 ```text
 https://您的GitHub用户名.github.io/仓库名/result.m3u

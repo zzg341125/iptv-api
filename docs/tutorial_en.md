@@ -33,13 +33,12 @@ Use GitHub Actions to generate results manually, serve player subscriptions from
 
 ### Enter the IPTV-API Project
 
-Open https://github.com/Guovin/iptv-api and click `Star` to favorite this project (Your Star is my motivation for
-continuous updates).
+Open the <a href="https://github.com/Guovin/iptv-api" target="_blank" rel="noopener noreferrer">IPTV-API project</a> and click `Star` to favorite it (Your Star is my motivation for continuous updates).
 ![Star](./images/star.png 'Star')
 
 ### Fork
 
-Copy the source code of this repository to your personal account repository.
+Open the <a href="https://github.com/Guovin/iptv-api/fork" target="_blank" rel="noopener noreferrer">Fork creation page</a> to copy this repository to your personal account.
 ![Fork button](./images/fork-btn.png 'Fork button')
 
 1. Name your personal repository as you like (the final live source result link depends on this name), here we use the
@@ -299,7 +298,7 @@ If everything is normal, after a short wait, you will see that the workflow has 
 mark).
 ![Workflow executed successfully](./images/workflow-success.png 'Workflow executed successfully')
 
-The workflow summary contains Pages links and Release download URLs. Players should use the Pages links:
+The workflow summary contains Pages links and Release download URLs. For online player use, open the Pages page and use the applicable result address:
 
 ```text
 https://your-github-username.github.io/repository-name/result.m3u
@@ -317,7 +316,7 @@ https://github.com/your-github-username/repository-name/releases/download/playli
 
 On the Pages results page, “Copy” always copies the original file URL for players. “Preview” opens an in-site viewer that explicitly decodes UTF-8, avoiding mojibake when a browser opens M3U responses without a charset. Because `epg.gz` is compressed, it only provides the original file action.
 
-Release and Fork destinations are generated from the repository running the workflow. The upstream site points to `Guovin/iptv-api`, while a fork's site points to that user's own fork. Only the upstream test notice links to the upstream repository's Fork creation page.
+Release and Fork destinations are generated from the repository running the workflow. The upstream site points to `Guovin/iptv-api`, while a fork's site points to that user's own fork. `Fork 项目` in the upstream results notice links directly to the upstream repository's Fork creation page.
 
 ![Username and Repository Name](./images/rep-info.png 'Username and Repository Name')
 

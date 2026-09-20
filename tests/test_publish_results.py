@@ -163,6 +163,9 @@ class PublishResultsTests(unittest.TestCase):
         for name in (*asset_contents, "manifest.json"):
             self.assertIn(f"https://owner.github.io/repository/{name}", index)
         self.assertIn("完整结果 / All networks", index)
+        self.assertIn("播放器在线使用请复制下方对应的 Pages 结果地址", index)
+        self.assertIn("完整播放列表", index)
+        self.assertIn("完整文本列表", index)
         self.assertIn("IPv4 结果 / IPv4 only", index)
         self.assertIn("IPv6 结果 / IPv6 only", index)
         self.assertIn("节目单 / Programme guide", index)
@@ -207,11 +210,11 @@ class PublishResultsTests(unittest.TestCase):
         self.assertNotIn("结果已发布 / Results published", index)
         self.assertNotIn("secondary-action", index)
         self.assertNotIn("border: 1px solid rgba(255, 255, 255, 0.42)", index)
-        self.assertNotIn("仅供测试 / Test only", index)
+        self.assertNotIn("主仓库结果说明 / Upstream results notice", index)
         self.assertNotIn("fonts.googleapis.com", index)
         self.assertNotIn("CDN accelerated links", index)
 
-    def test_pages_site_marks_upstream_results_as_test_only(self):
+    def test_pages_site_marks_upstream_results_with_fork_guidance(self):
         assets = self.workspace / "release-assets"
         assets.mkdir()
         (assets / "result.txt").write_text("Demo,http://example.com\n", encoding="utf-8")
@@ -231,7 +234,7 @@ class PublishResultsTests(unittest.TestCase):
         )
 
         index = (site / "index.html").read_text(encoding="utf-8")
-        self.assertIn("仅供测试 / Test only", index)
+        self.assertIn("主仓库结果说明 / Upstream results notice", index)
         self.assertIn("主仓库发布的 Pages 链接和 Release 结果仅用于功能测试", index)
         self.assertIn(
             "https://github.com/Guovin/iptv-api/releases/tag/playlist-20260920-200100-utc-plus-0800",
@@ -301,7 +304,7 @@ class PublishWorkflowTests(unittest.TestCase):
         self.assertIn("actions/configure-pages@v5", workflow)
         self.assertIn("actions/upload-pages-artifact@v4", workflow)
         self.assertIn("actions/deploy-pages@v4", workflow)
-        self.assertIn('release_title="$RELEASE_TITLE (test only)"', workflow)
+        self.assertNotIn('release_title="$RELEASE_TITLE (test only)"', workflow)
         self.assertIn("pages_base_url: ${{ steps.generate.outputs.pages_base_url }}", workflow)
         self.assertIn("release_title: ${{ steps.release.outputs.title }}", workflow)
         self.assertIn("PAGES_BASE: ${{ needs.generate.outputs.pages_base_url }}", workflow)
@@ -316,8 +319,9 @@ class PublishWorkflowTests(unittest.TestCase):
             workflow,
         )
         self.assertNotIn("github.run_attempt", workflow)
-        self.assertIn("[Open Pages result links / 打开 Pages 结果页]($PAGES_BASE)", workflow)
-        self.assertIn("[Open Pages test result links / 打开 Pages 测试结果页]($PAGES_BASE)", workflow)
+        self.assertIn('pages_link="<a href=\\"$PAGES_BASE\\" target=\\"_blank\\"', workflow)
+        self.assertIn("[Fork 项目](https://github.com/Guovin/iptv-api/fork)", workflow)
+        self.assertNotIn("此预发布版会保留，用于独立统计本次附件的下载量", workflow)
         self.assertNotIn("gh release edit", workflow)
         self.assertNotIn("gh release upload", workflow)
         self.assertNotIn("--clobber", workflow)

@@ -31,12 +31,12 @@
 
 ### 进入IPTV-API项目
 
-打开 https://github.com/Guovin/iptv-api 点击`Star`收藏该项目（您的Star是我持续更新的动力）
+打开<a href="https://github.com/Guovin/iptv-api" target="_blank" rel="noopener noreferrer">IPTV-API 项目</a>点击`Star`收藏该项目（您的Star是我持续更新的动力）
 ![Star](./images/star.png 'Star')
 
 ### Fork
 
-将本仓库的源代码复制至个人账号仓库中
+打开<a href="https://github.com/Guovin/iptv-api/fork" target="_blank" rel="noopener noreferrer">Fork 创建页</a>，将本仓库的源代码复制至个人账号仓库中。
 ![Fork入口](./images/fork-btn.png 'Fork入口')
 
 1. 个人仓库命名，可按您喜欢的名字随意命名（最终直播源结果链接取决于该名称），这里以默认`iptv-api`为例
@@ -261,7 +261,7 @@ https://example.com/sub2.m3u UA="Mozilla/5.0 xxx"
 
 ![Workflow执行成功](./images/workflow-success.png 'Workflow执行成功')
 
-此时可以在工作流页面的 Summary 查看 Pages 链接和 Release 下载地址。播放器请使用 Pages 链接：
+此时可以在工作流页面的 Summary 查看 Pages 链接和 Release 下载地址。播放器在线使用请打开 Pages 页面获取相应的结果地址：
 
 ```text
 https://您的GitHub用户名.github.io/仓库名/result.m3u
@@ -279,7 +279,7 @@ https://github.com/您的GitHub用户名/仓库名/releases/download/playlist-20
 
 Pages 结果页中的“复制链接”始终复制播放器可使用的原始文件地址；“预览内容”通过站内预览页强制按 UTF-8 解码，避免浏览器直接打开 M3U 时因响应缺少字符集而显示乱码。`epg.gz` 是压缩文件，只提供原始文件入口。
 
-Release 和 Fork 跳转地址均从运行工作流的仓库信息生成：主仓库页面指向 `Guovin/iptv-api`，Fork 仓库页面指向该用户自己的 Fork；只有主仓库的测试提示提供返回主仓库 Fork 创建页的入口。
+Release 和 Fork 跳转地址均从运行工作流的仓库信息生成：主仓库页面指向 `Guovin/iptv-api`，Fork 仓库页面指向该用户自己的 Fork；主仓库结果说明中的 `Fork 项目` 可直接跳转到主仓库的 Fork 创建页。
 
 ![用户名与仓库名称](./images/rep-info.png '用户名与仓库名称')
 

@@ -17,13 +17,13 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/Guovin/iptv-api/releases/latest">
+  <a href="https://github.com/Guovin/iptv-api/releases/latest" target="_blank" rel="noopener noreferrer">
     <img src="https://img.shields.io/github/v/release/guovin/iptv-api?label=Version" />
   </a>
   <a href="https://www.python.org/">
     <img src="https://img.shields.io/badge/python-3.14-47c219?label=Python" />
   </a>
-  <a href="https://github.com/Guovin/iptv-api/releases/latest">
+  <a href="https://github.com/Guovin/iptv-api/releases/latest" target="_blank" rel="noopener noreferrer">
     <img src="https://img.shields.io/github/downloads/guovin/iptv-api/total?label=GUI%20Downloads" />
   </a>
   <a href="https://hub.docker.com/repository/docker/guovern/iptv-api">
@@ -32,7 +32,7 @@
   <a href="https://github.com/Guovin/iptv-api/stargazers">
     <img src="https://img.shields.io/github/stars/guovin/iptv-api?label=Stars" />
   </a>
-  <a href="https://github.com/Guovin/iptv-api/fork">
+  <a href="https://github.com/Guovin/iptv-api/fork" target="_blank" rel="noopener noreferrer">
     <img src="https://img.shields.io/github/forks/guovin/iptv-api?label=Forks" />
   </a>
 </p>
@@ -248,9 +248,9 @@ iptv-api/                  # Project root directory
 > `raw.githubusercontent.com/.../output/...` URLs no longer update. Use Docker, the command line, or the GUI for
 > scheduled runs.
 
-After forking, select `GitHub Actions` under `Settings → Pages`, then manually run `Generate playlist manually`.
-Players should subscribe with the Pages links, while the Release URLs are intended for downloading and saving result
-files. Neither path creates Git commits.
+After <a href="https://github.com/Guovin/iptv-api/fork" target="_blank" rel="noopener noreferrer">forking this project</a>, select `GitHub Actions` under `Settings → Pages`, then manually run `Generate playlist manually`.
+For online player use, open the Pages page and use the applicable result address. Release URLs are intended for
+downloading and saving result files. Neither path creates Git commits.
 
 ```text
 https://your-github-username.github.io/repository-name/result.m3u

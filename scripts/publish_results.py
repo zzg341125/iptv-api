@@ -26,9 +26,9 @@ OPTIONAL_ASSETS = {
 PAGE_ASSET_GROUPS = (
     {
         "id": "all-results",
-        "eyebrow": "推荐 / Recommended",
+        "eyebrow": "结果 / Results",
         "title": "完整结果 / All networks",
-        "description": "包含所有可用频道，播放器建议优先使用这组 Pages 链接。",
+        "description": "包含所有可用频道。 / Includes all available channels.",
         "assets": (
             ("result.m3u", "M3U", "完整播放列表", "Complete playlist"),
             ("result.txt", "TXT", "完整文本列表", "Complete text list"),
@@ -38,7 +38,7 @@ PAGE_ASSET_GROUPS = (
         "id": "ipv4-results",
         "eyebrow": "IPv4",
         "title": "IPv4 结果 / IPv4 only",
-        "description": "仅包含 IPv4 地址，适用于未启用 IPv6 或 IPv6 连接不稳定的网络。",
+        "description": "仅包含 IPv4 地址，适用于未启用 IPv6 或 IPv6 连接不稳定的网络。 / Contains IPv4 addresses only, for networks without IPv6 or with unstable IPv6.",
         "assets": (
             ("ipv4.m3u", "M3U", "IPv4 播放列表", "IPv4 playlist"),
             ("ipv4.txt", "TXT", "IPv4 文本列表", "IPv4 text list"),
@@ -48,7 +48,7 @@ PAGE_ASSET_GROUPS = (
         "id": "ipv6-results",
         "eyebrow": "IPv6",
         "title": "IPv6 结果 / IPv6 only",
-        "description": "仅包含 IPv6 地址，请在当前网络和播放设备支持 IPv6 时使用。",
+        "description": "仅包含 IPv6 地址，请在当前网络和播放设备支持 IPv6 时使用。 / Contains IPv6 addresses only; use it when the current network and player support IPv6.",
         "assets": (
             ("ipv6.m3u", "M3U", "IPv6 播放列表", "IPv6 playlist"),
             ("ipv6.txt", "TXT", "IPv6 文本列表", "IPv6 text list"),
@@ -432,7 +432,7 @@ def prepare_pages_site(
     <aside class="test-notice" role="note" aria-labelledby="test-notice-title">
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 2.8 20h18.4L12 3Z"/><path d="M12 9v5M12 17.5h.01"/></svg>
       <div>
-        <h2 id="test-notice-title">仅供测试 / Test only</h2>
+        <h2 id="test-notice-title">主仓库结果说明 / Upstream results notice</h2>
         <p>主仓库发布的 Pages 链接和 Release 结果仅用于功能测试，不保证内容完整性、可用性或持续更新。实际使用请
           <a class="inline-fork-link" href="{escaped_fork_url}" target="_blank" rel="noopener noreferrer">Fork 项目</a>
           并运行自己的工作流。<br><span lang="en">Pages links and Release results from the upstream repository are for functional testing only.
@@ -633,7 +633,7 @@ def prepare_pages_site(
       <div class="hero-content">
         <p class="brand"><img class="brand-mark" src="favicon.svg" alt="" width="34" height="34"> IPTV-API</p>
         <h1>更新结果<br>Playlist results</h1>
-        <p class="hero-copy">选择适合当前网络的 Pages 链接。播放器可使用 M3U 或 TXT 链接，EPG 文件可为支持的播放器提供节目单信息。<span lang="en">Choose the Pages link that matches your network and player.</span></p>
+        <p class="hero-copy">播放器在线使用请复制下方对应的 Pages 结果地址。<span lang="en">For online player use, copy the applicable Pages result address below.</span></p>
         <div class="hero-meta">
           <span><strong>{len(copied_names)}</strong>可用文件 / Available files</span>
           <span><strong>生成时间 / Generated</strong>{generated_markup}</span>
@@ -646,7 +646,7 @@ def prepare_pages_site(
     <section class="usage" aria-label="使用建议 / Usage guidance">
       <article class="usage-card">
         <h2>播放器订阅 / Player subscription</h2>
-        <p>播放器请使用下方 Pages 的 M3U 或 TXT 链接。</p>
+        <p>播放器在线使用请复制下方对应的 Pages 结果地址。</p>
       </article>
       <article class="usage-card">
         <h2>下载保存 / Download &amp; Save</h2>
