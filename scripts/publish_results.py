@@ -1,5 +1,4 @@
 import argparse
-import hashlib
 import html
 import json
 import os
@@ -64,16 +63,6 @@ PAGE_ASSET_GROUPS = (
             ("epg.xml", "XML", "EPG XML 文件", "EPG XML data"),
         ),
     },
-    {
-        "id": "verification-files",
-        "eyebrow": "校验 / Verify",
-        "title": "发布信息 / Publication details",
-        "description": "下载并保存结果时，可使用清单和 SHA-256 校验值确认文件完整性。",
-        "assets": (
-            ("manifest.json", "JSON", "发布清单", "Release manifest"),
-            ("SHA256SUMS.txt", "SHA-256", "文件校验值", "File checksums"),
-        ),
-    },
 )
 
 REPOSITORY_PATTERN = re.compile(r"^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$")
@@ -87,8 +76,6 @@ PREVIEWABLE_PAGE_ASSETS = {
     "ipv6.m3u",
     "ipv6.txt",
     "epg.xml",
-    "manifest.json",
-    "SHA256SUMS.txt",
 }
 
 
@@ -118,14 +105,6 @@ def _resolve_output_file(path, output_dir):
     return resolved
 
 
-def _sha256(path):
-    digest = hashlib.sha256()
-    with path.open("rb") as file:
-        for chunk in iter(lambda: file.read(1024 * 1024), b""):
-            digest.update(chunk)
-    return digest.hexdigest()
-
-
 def build_release_metadata(time_zone_name, now=None):
     try:
         configured_zone = ZoneInfo(time_zone_name)
@@ -143,17 +122,6 @@ def build_release_metadata(time_zone_name, now=None):
         "title": f"Generated playlist · {local_time:%Y-%m-%d %H:%M:%S} ({time_zone_name})",
         "generated_at": local_time.isoformat(timespec="seconds"),
     }
-
-
-def _load_page_metadata(assets_directory):
-    manifest_path = assets_directory / "manifest.json"
-    if not manifest_path.is_file():
-        return {}
-    try:
-        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
-    except (OSError, UnicodeError, json.JSONDecodeError):
-        return {}
-    return manifest if isinstance(manifest, dict) else {}
 
 
 def _render_page_sections(pages_base_url, copied_names):
@@ -293,11 +261,6 @@ def prepare_release_assets(
         final_file,
         destination,
         output_dir="output",
-        generated_at=None,
-        repository=None,
-        source_sha=None,
-        workflow_run_id=None,
-        release_tag=None,
 ):
     output_dir = Path(output_dir)
     if not output_dir.is_absolute():
@@ -324,7 +287,6 @@ def prepare_release_assets(
         if candidate.exists():
             sources.append((_resolve_output_file(candidate, output_dir), asset_name))
 
-    copied = []
     seen_names = set()
     for source, asset_name in sources:
         if asset_name in seen_names:
@@ -332,42 +294,6 @@ def prepare_release_assets(
         seen_names.add(asset_name)
         target = destination / asset_name
         shutil.copyfile(source, target)
-        copied.append(target)
-
-    generated_at = generated_at or datetime.now(timezone.utc).isoformat()
-    assets = [
-        {
-            "name": path.name,
-            "size": path.stat().st_size,
-            "sha256": _sha256(path),
-        }
-        for path in sorted(copied, key=lambda item: item.name)
-    ]
-    manifest = {
-        "schema_version": 1,
-        "generated_at": generated_at,
-        "repository": repository or "",
-        "source_sha": source_sha or "",
-        "workflow_run_id": workflow_run_id or "",
-        "release_tag": release_tag or "",
-        "assets": assets,
-    }
-    manifest_path = destination / "manifest.json"
-    manifest_path.write_text(
-        json.dumps(manifest, ensure_ascii=False, indent=2) + "\n",
-        encoding="utf-8",
-    )
-
-    checksum_paths = [*copied, manifest_path]
-    checksum_lines = [
-        f"{_sha256(path)}  {path.name}"
-        for path in sorted(checksum_paths, key=lambda item: item.name)
-    ]
-    (destination / "SHA256SUMS.txt").write_text(
-        "\n".join(checksum_lines) + "\n",
-        encoding="utf-8",
-    )
-    return manifest
 
 
 def prepare_pages_site(
@@ -375,6 +301,9 @@ def prepare_pages_site(
         destination,
         pages_base_url,
         favicon_path=DEFAULT_PAGE_FAVICON,
+        repository="",
+        generated_at="",
+        release_tag="",
 ):
     assets_directory = Path(assets_directory).resolve(strict=True)
     destination = Path(destination)
@@ -409,10 +338,9 @@ def prepare_pages_site(
     if "result.txt" not in copied_names:
         raise ValueError("Pages input must contain result.txt")
 
-    metadata = _load_page_metadata(assets_directory)
-    repository = str(metadata.get("repository") or "").strip()
-    generated_at = str(metadata.get("generated_at") or "").strip()
-    release_tag = str(metadata.get("release_tag") or "").strip()
+    repository = str(repository or "").strip()
+    generated_at = str(generated_at or "").strip()
+    release_tag = str(release_tag or "").strip()
     release_guidance = "<p>保存结果请前往当前仓库的 Release 下载对应文件。</p>"
     main_repository_notice = ""
     if REPOSITORY_PATTERN.fullmatch(repository):
@@ -743,11 +671,6 @@ def main():
         final_file=args.final_file,
         destination=args.destination,
         output_dir=args.output_dir,
-        repository=os.getenv("GITHUB_REPOSITORY"),
-        source_sha=os.getenv("GITHUB_SHA"),
-        workflow_run_id=os.getenv("GITHUB_RUN_ID"),
-        generated_at=args.generated_at,
-        release_tag=args.release_tag,
     )
     if bool(args.pages_destination) != bool(args.pages_base_url):
         parser.error("--pages-destination and --pages-base-url must be used together")
@@ -756,6 +679,9 @@ def main():
             assets_directory=args.destination,
             destination=args.pages_destination,
             pages_base_url=args.pages_base_url,
+            repository=os.getenv("GITHUB_REPOSITORY"),
+            generated_at=args.generated_at,
+            release_tag=args.release_tag,
         )
 
 

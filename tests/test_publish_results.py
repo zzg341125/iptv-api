@@ -1,5 +1,3 @@
-import hashlib
-import json
 import os
 import tempfile
 import unittest
@@ -46,7 +44,7 @@ class PublishResultsTests(unittest.TestCase):
             },
         )
 
-    def test_prepares_only_canonical_public_assets_and_checksums(self):
+    def test_prepares_only_canonical_public_assets(self):
         self._write("custom/user_result.txt", b"Demo,http://example.com\n")
         self._write("custom/user_result.m3u", b"#EXTM3U\n")
         self._write("ipv4/result.txt", b"IPv4,http://example.com\n")
@@ -55,14 +53,9 @@ class PublishResultsTests(unittest.TestCase):
         self._write("data/channel_results.db", b"private database")
 
         destination = self.workspace / "release-assets"
-        manifest = prepare_release_assets(
+        prepare_release_assets(
             final_file="output/custom/user_result.txt",
             destination=destination,
-            generated_at="2026-09-08T00:00:00+00:00",
-            repository="owner/repository",
-            source_sha="abc123",
-            workflow_run_id="42",
-            release_tag="playlist-20260920-103000-utc-plus-0800",
         )
 
         self.assertEqual(
@@ -72,23 +65,10 @@ class PublishResultsTests(unittest.TestCase):
                 "result.m3u",
                 "ipv4.txt",
                 "epg.gz",
-                "manifest.json",
-                "SHA256SUMS.txt",
             },
         )
-        self.assertEqual(manifest["repository"], "owner/repository")
-        self.assertEqual(manifest["generated_at"], "2026-09-08T00:00:00+00:00")
-        self.assertEqual(
-            manifest["release_tag"],
-            "playlist-20260920-103000-utc-plus-0800",
-        )
-        manifest_file = json.loads((destination / "manifest.json").read_text(encoding="utf-8"))
-        self.assertEqual(manifest_file, manifest)
-        result_digest = hashlib.sha256((destination / "result.txt").read_bytes()).hexdigest()
-        checksums = (destination / "SHA256SUMS.txt").read_text(encoding="utf-8")
-        self.assertIn(f"{result_digest}  result.txt", checksums)
-        self.assertNotIn("log.log", checksums)
-        self.assertNotIn("channel_results.db", checksums)
+        self.assertNotIn("log.log", {path.name for path in destination.iterdir()})
+        self.assertNotIn("channel_results.db", {path.name for path in destination.iterdir()})
 
     def test_rejects_final_file_outside_output_directory(self):
         secret = self.workspace / "secret.txt"
@@ -128,31 +108,24 @@ class PublishResultsTests(unittest.TestCase):
             "ipv6.m3u": b"#EXTM3U\n",
             "epg.gz": b"gzip-data",
             "epg.xml": b"<tv></tv>",
-            "SHA256SUMS.txt": b"checksums\n",
         }
         for name, content in asset_contents.items():
             (assets / name).write_bytes(content)
-        (assets / "manifest.json").write_text(
-            json.dumps({
-                "generated_at": "2026-09-20T12:00:00+00:00",
-                "repository": "owner/repository",
-                "release_tag": "playlist-20260920-200000-utc-plus-0800",
-            }),
-            encoding="utf-8",
-        )
 
         site = self.workspace / "pages-site"
         result = prepare_pages_site(
             assets_directory=assets,
             destination=site,
             pages_base_url="https://owner.github.io/repository/",
+            repository="owner/repository",
+            generated_at="2026-09-20T12:00:00+00:00",
+            release_tag="playlist-20260920-200000-utc-plus-0800",
         )
 
         self.assertEqual(
             {path.name for path in site.iterdir()},
             {
                 *asset_contents,
-                "manifest.json",
                 "favicon.svg",
                 "index.html",
                 "viewer.html",
@@ -160,7 +133,7 @@ class PublishResultsTests(unittest.TestCase):
         )
         self.assertEqual(result["pages_base_url"], "https://owner.github.io/repository")
         index = (site / "index.html").read_text(encoding="utf-8")
-        for name in (*asset_contents, "manifest.json"):
+        for name in asset_contents:
             self.assertIn(f"https://owner.github.io/repository/{name}", index)
         self.assertIn("完整结果 / All networks", index)
         self.assertIn("播放器在线使用请复制下方对应的 Pages 结果地址", index)
@@ -169,7 +142,9 @@ class PublishResultsTests(unittest.TestCase):
         self.assertIn("IPv4 结果 / IPv4 only", index)
         self.assertIn("IPv6 结果 / IPv6 only", index)
         self.assertIn("节目单 / Programme guide", index)
-        self.assertIn("发布信息 / Publication details", index)
+        self.assertNotIn("发布信息 / Publication details", index)
+        self.assertNotIn("manifest.json", index)
+        self.assertNotIn("SHA256SUMS.txt", index)
         self.assertIn("下载保存 / Download &amp; Save", index)
         self.assertNotIn("Download &amp; save", index)
         self.assertIn(
@@ -183,8 +158,8 @@ class PublishResultsTests(unittest.TestCase):
         self.assertIn("2026-09-20T12:00:00+00:00", index)
         self.assertIn('<link rel="icon" href="favicon.svg" type="image/svg+xml">', index)
         self.assertIn('class="brand-mark" src="favicon.svg"', index)
-        self.assertEqual(index.count('class="card-action copy-action"'), 10)
-        self.assertEqual(index.count('target="_blank" rel="noopener noreferrer"'), 11)
+        self.assertEqual(index.count('class="card-action copy-action"'), 8)
+        self.assertEqual(index.count('target="_blank" rel="noopener noreferrer"'), 9)
         self.assertIn(
             'href="https://owner.github.io/repository/viewer.html?file=result.m3u"',
             index,
@@ -218,19 +193,13 @@ class PublishResultsTests(unittest.TestCase):
         assets = self.workspace / "release-assets"
         assets.mkdir()
         (assets / "result.txt").write_text("Demo,http://example.com\n", encoding="utf-8")
-        (assets / "manifest.json").write_text(
-            json.dumps({
-                "repository": "Guovin/iptv-api",
-                "release_tag": "playlist-20260920-200100-utc-plus-0800",
-            }),
-            encoding="utf-8",
-        )
-
         site = self.workspace / "pages-site"
         prepare_pages_site(
             assets_directory=assets,
             destination=site,
             pages_base_url="https://guovin.github.io/iptv-api",
+            repository="Guovin/iptv-api",
+            release_tag="playlist-20260920-200100-utc-plus-0800",
         )
 
         index = (site / "index.html").read_text(encoding="utf-8")
