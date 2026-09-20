@@ -252,8 +252,6 @@ https://您的GitHub用户名.github.io/仓库名/result.m3u
 https://您的GitHub用户名.github.io/仓库名/result.txt
 ```
 
-工作流 Summary 提供 Pages 链接和本次运行的 Release 下载地址；独立预发布版使用 `config.ini` 的 `time_zone` 生成可读时间名称，历史版本会保留，便于分别查看附件下载量。`cdn_url` 不用于包装 `github.io` 发布地址。
-
 迁移和完整操作步骤请见[详细教程](./docs/tutorial.md#工作流部署)。
 
 ### 命令行

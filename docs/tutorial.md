@@ -247,7 +247,8 @@ https://example.com/sub2.m3u UA="Mozilla/5.0 xxx"
 
 ![Workflow运行中](./images/workflow-running.png 'Workflow运行中')
 
-> [!NOTE]\
+> [!NOTE]
+>
 > 由于运行时间取决于模板频道数量、页数配置与网络状况，请耐心等待。测速可能需要 30 分钟至 1 小时；它在最长 5 小时的生成 job 中执行。Pages 的 10 分钟部署限制只作用于结果生成完成后的独立部署 job，不包含测速时间。
 
 ##### （4）Workflow 取消运行：
@@ -269,7 +270,7 @@ https://您的GitHub用户名.github.io/仓库名/result.txt
 https://您的GitHub用户名.github.io/仓库名/epg.gz
 ```
 
-每次运行都会创建并保留独立的预发布版，工作流 Summary 和 Pages 页面会提供本次 Release 的入口。Release 标题和标签时间来自 `config.ini` 的 `time_zone`；默认时区下的标题示例为 `Generated playlist · 2026-09-20 10:30:00 (Asia/Shanghai)`。由于存在重定向和下载响应头，建议用它下载和保存结果文件，不要作为播放器订阅地址。附件下载地址格式如下：
+由于存在重定向和下载响应头，建议使用 Release 下载和保存结果文件，不要作为播放器订阅地址。附件下载地址格式如下：
 
 ```text
 https://github.com/您的GitHub用户名/仓库名/releases/download/playlist-20260920-103000-utc-plus-0800/result.m3u
@@ -286,8 +287,9 @@ Release 和 Fork 跳转地址均从运行工作流的仓库信息生成：主仓
 如果访问该链接能正常返回更新后的接口内容，说明您的直播源接口链接已经大功告成了！将该链接复制粘贴到`TVBox`
 等播放器配置栏中即可使用~
 
-> [!NOTE]\
-> 1. 如果您修改了模板或配置文件，可再次手动触发 `Run workflow`。Pages 地址保持不变，每次运行会创建新的预发布版并保留历史附件及其下载量。
+> [!NOTE]
+>
+> 1. 如果您修改了模板或配置文件，可再次手动触发 `Run workflow`。Pages 地址保持不变。
 > 2. `open_history` 在 Actions 中仅尝试从短期缓存恢复，缓存失效时会执行无历史的完整生成。
 > 3. `open_auto_disable_source` 对配置文件的修改不会提交回仓库；需要持久保存时请使用其他部署方式。
 > 4. Pages 使用临时 Artifact 部署，不会向 Git 写入生成结果；请勿自行改为提交 `gh-pages` 分支。

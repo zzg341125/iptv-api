@@ -257,10 +257,6 @@ https://your-github-username.github.io/repository-name/result.m3u
 https://your-github-username.github.io/repository-name/result.txt
 ```
 
-The workflow summary provides Pages links and the current run's Release download URLs. Each prerelease uses a readable
-timestamp in the `time_zone` configured in `config.ini`. Historical prereleases are retained so their asset download
-counts remain available. `cdn_url` is not used to wrap published `github.io` URLs.
-
 See the [detailed tutorial](./docs/tutorial_en.md#workflow-deployment) for setup and migration steps.
 
 ### Command Line

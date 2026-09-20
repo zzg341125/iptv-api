@@ -279,7 +279,8 @@ Now you can run the update workflow.
 ##### (3) Workflow in progress:
 
 Wait a moment, and you will see that your first update workflow is running!
-> [!NOTE]\
+> [!NOTE]
+>
 > Runtime depends on the template size, page settings, and network conditions. Speed testing may take 30–60 minutes and
 > runs in a generation job with a five-hour timeout. The ten-minute Pages deployment limit applies only to the separate
 > deployment job after generation completes; it does not include speed-testing time.
@@ -306,7 +307,7 @@ https://your-github-username.github.io/repository-name/result.txt
 https://your-github-username.github.io/repository-name/epg.gz
 ```
 
-Every run creates and retains a separate prerelease. The workflow summary and Pages site link to the Release for the current run. Release titles and tags use the `time_zone` configured in `config.ini`; with the default setting, an example title is `Generated playlist · 2026-09-20 10:30:00 (Asia/Shanghai)`. Because Release assets use redirects and download-oriented response headers, use them to download and save result files instead of as player subscription URLs. Asset URLs use this format:
+Because Release assets use redirects and download-oriented response headers, use them to download and save result files instead of as player subscription URLs. Asset URLs use this format:
 
 ```text
 https://github.com/your-github-username/repository-name/releases/download/playlist-20260920-103000-utc-plus-0800/result.m3u
@@ -323,8 +324,9 @@ Release and Fork destinations are generated from the repository running the work
 If you can access this link and it returns the updated interface content, then your live source interface link has been
 successfully created! Simply copy and paste this link into software like `TVBox` in the configuration field to use~
 
-> [!NOTE]\
-> 1. Run `Run workflow` again after changing templates or configuration. The Pages URLs remain unchanged, while each run creates a new prerelease and retains historical assets and download counts.
+> [!NOTE]
+>
+> 1. Run `Run workflow` again after changing templates or configuration. The Pages URLs remain unchanged.
 > 2. In Actions, `open_history` only attempts to restore short-lived cached state. A full run without history is used
 >    when that cache has expired.
 > 3. Changes made by `open_auto_disable_source` are not committed. Use another deployment method when those changes

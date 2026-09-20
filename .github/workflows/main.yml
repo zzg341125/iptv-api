@@ -173,15 +173,21 @@ jobs:
           {
             echo "### Published playlist"
             echo
-            echo "- GitHub Pages 结果页（播放器在线链接）: $PAGES_BASE"
-            echo "- Pages M3U: $PAGES_BASE/result.m3u"
+            echo "在线链接 / Online links"
             echo "- Pages TXT: $PAGES_BASE/result.txt"
+            if [[ -f release-assets/result.m3u ]]; then
+              echo "- Pages M3U: $PAGES_BASE/result.m3u"
+            fi
+            if [[ -f release-assets/epg.gz ]]; then
+              echo "- Pages EPG: $PAGES_BASE/epg.gz"
+            fi
+            echo
+            echo "下载链接 / Download links"
+            echo "- Release TXT: $RELEASE_BASE/result.txt"
             if [[ -f release-assets/result.m3u ]]; then
               echo "- Release M3U: $RELEASE_BASE/result.m3u"
             fi
-            echo "- Release TXT: $RELEASE_BASE/result.txt"
             if [[ -f release-assets/epg.gz ]]; then
-              echo "- Pages EPG: $PAGES_BASE/epg.gz"
               echo "- Release EPG: $RELEASE_BASE/epg.gz"
             fi
             echo
