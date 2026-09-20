@@ -24,7 +24,7 @@
 
 ## Workflow deployment
 
-Use GitHub Actions to generate results manually, serve player subscriptions from the fork's own GitHub Pages site, and keep a fixed Release as a download and fallback endpoint.
+Use GitHub Actions to generate results manually, serve player subscriptions from the fork's own GitHub Pages site, and keep a fixed Release for downloading and saving result files.
 
 > [!IMPORTANT]
 > Because GitHub resources are limited, the workflow can only be triggered manually. Generated results are deployed
@@ -144,10 +144,9 @@ Like editing templates, modify the runtime configuration.
 2. Name the configuration file `user_config.ini`.
 3. Paste the default configuration. When creating `user_config.ini`, enter only the configuration items you want to
    modify; you do not need to copy the entire `config.ini`.
-4. Modify the template and result file configuration and optional CDN proxy acceleration:
+4. Modify the template and result file configuration:
     - source_file = config/user_demo.txt
     - final_file = output/user_result.txt
-    - cdn_url = (go to the `Govin` public account and reply `cdn` to get it)
 5. Click `Commit changes...` to save.
 
 ![Create user_config.ini](./images/edit-user-config.png 'Create user_config.ini')
@@ -156,9 +155,6 @@ Like editing templates, modify the runtime configuration.
 
 > [!IMPORTANT]
 > Keep `[Settings]` at the top of `user_config.ini`; otherwise, the custom configuration below does not take effect.
-
-> [!NOTE]
-> The workflow uses the first `cdn_url` to build accelerated Pages subscription URLs. That CDN must accept a complete `https://username.github.io/repository/...` URL as its proxy target. If it is not configured or does not support `github.io`, use the direct Pages URL shown in the workflow summary.
 
 Adjust the configuration as needed, here is the default configuration description:
 [Configuration parameters](./config_en.md)
@@ -303,7 +299,7 @@ If everything is normal, after a short wait, you will see that the workflow has 
 mark).
 ![Workflow executed successfully](./images/workflow-success.png 'Workflow executed successfully')
 
-The workflow summary contains accelerated CDN, direct Pages, and fallback Release links. Prefer the Pages URLs for players:
+The workflow summary contains Pages links and Release download URLs. Players should use the Pages links directly:
 
 ```text
 https://your-github-username.github.io/repository-name/result.m3u
@@ -311,19 +307,13 @@ https://your-github-username.github.io/repository-name/result.txt
 https://your-github-username.github.io/repository-name/epg.gz
 ```
 
-When a configured CDN supports `github.io`, prefer the accelerated URL generated in the summary. Its format is:
-
-```text
-https://cdn-address/https://your-github-username.github.io/repository-name/result.m3u
-```
-
-Switch to the CDN when Pages is inaccessible, or back to the direct Pages URL when the CDN is unavailable. Release assets continue to update, but their redirects and download-oriented response headers make them better suited to downloads and fallback use:
+Release assets continue to update. Because they use redirects and download-oriented response headers, use them to download and save result files instead of as player subscription URLs:
 
 ```text
 https://github.com/your-github-username/repository-name/releases/download/playlist-latest/result.m3u
 ```
 
-`result.txt` is always published. `result.m3u` and `epg.gz` exist only when their features are enabled and generation succeeds. The M3U uses the accelerated Pages EPG URL when a CDN is configured, otherwise it uses the direct Pages URL.
+`result.txt` is always published. `result.m3u` and `epg.gz` exist only when their features are enabled and generation succeeds. The M3U uses the Pages link for EPG.
 
 ![Username and Repository Name](./images/rep-info.png 'Username and Repository Name')
 
@@ -331,7 +321,7 @@ If you can access this link and it returns the updated interface content, then y
 successfully created! Simply copy and paste this link into software like `TVBox` in the configuration field to use~
 
 > [!NOTE]\
-> 1. Run `Run workflow` again after changing templates or configuration; the Pages, CDN, and Release URLs remain unchanged.
+> 1. Run `Run workflow` again after changing templates or configuration; the Pages and Release URLs remain unchanged.
 > 2. In Actions, `open_history` only attempts to restore short-lived cached state. A full run without history is used
 >    when that cache has expired.
 > 3. Changes made by `open_auto_disable_source` are not committed. Use another deployment method when those changes
@@ -345,7 +335,7 @@ successfully created! Simply copy and paste this link into software like `TVBox`
 3. Use `Sync fork` → `Update branch`. Complete step 1 before using `Discard commits` if conflicts require it.
 4. Under `Settings → Pages`, set the publishing source to `GitHub Actions`.
 5. Run `Generate playlist manually` and confirm both the Pages deployment and `playlist-latest` prerelease were created.
-6. Replace legacy raw or Release URLs in players with the CDN-accelerated or direct Pages URL from the summary. The old raw URL retains only its last result and no longer updates.
+6. Replace legacy raw or Release URLs in players with the Pages link from the summary. The old raw URL retains only its last result and no longer updates.
 
 ## Command Line
 

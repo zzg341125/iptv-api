@@ -153,7 +153,7 @@
 | app_port                 | Advanced compatibility setting: internal Flask API port. Normally do not change or use it as the user-facing port.                                                                                                                                                                                                                          | 5180                                     |
 | public_scheme            | Advanced compatibility setting: legacy public scheme, used only when `public_url` is empty.                                                                                                                                                                                                                                                 | http                                     |
 | public_domain            | Advanced compatibility setting: legacy public host, used only when `public_url` is empty; defaults to the local IP.                                                                                                                                                                                                                         | 127.0.0.1                                |
-| cdn_url                  | CDN proxy address(es): outside Actions they accelerate subscriptions, EPG, and channel logos; during Actions publishing, the first address accelerates GitHub Pages results. The CDN must accept complete `github.io` URLs. Multiple comma-separated values are supported. |                                          |
+| cdn_url                  | CDN proxy address(es) for supported resources such as subscriptions, EPG, and channel logos. GitHub Actions does not use this setting to accelerate published Pages results. Multiple comma-separated values are supported. |                                          |
 | http_proxy               | HTTP proxy address used only to fetch subscription sources and EPG data; speed tests, media probes, and screenshots remain direct                                                                                                                                                                                                            |                                          |
 | open_local               | Enable local source function, will use the data in the template file and the local source file (`local.txt`).                                                                                                                                                                                                                               | True                                     |
 | open_subscribe           | Enable subscription source function.                                                                                                                                                                                                                                                                                                        | True                                     |
@@ -249,7 +249,7 @@ iptv-api/                  # Project root directory
 > scheduled runs.
 
 After forking, select `GitHub Actions` under `Settings → Pages`, then manually run `Generate playlist manually`. Pages
-URLs are intended for player subscriptions, while the Release remains a download and fallback endpoint. Neither path
+Players should subscribe with the Pages links, while the Release URLs are intended for downloading and saving result files. Neither path
 creates Git commits.
 
 ```text
@@ -257,8 +257,8 @@ https://your-github-username.github.io/repository-name/result.m3u
 https://your-github-username.github.io/repository-name/result.txt
 ```
 
-If `cdn_url` supports proxying complete `github.io` URLs, the workflow summary also provides accelerated links and the
-M3U points its EPG URL at that accelerated endpoint. Direct Pages links remain available as a fallback.
+The workflow summary provides Pages links and Release download URLs. `cdn_url` is not used to wrap
+published `github.io` URLs.
 
 See the [detailed tutorial](./docs/tutorial_en.md#workflow-deployment) for setup and migration steps.
 

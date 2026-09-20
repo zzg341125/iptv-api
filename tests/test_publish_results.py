@@ -7,7 +7,6 @@ from pathlib import Path
 from unittest.mock import patch
 
 from scripts.publish_results import (
-    build_public_base_url,
     prepare_pages_site,
     prepare_release_assets,
 )
@@ -95,7 +94,7 @@ class PublishResultsTests(unittest.TestCase):
                     destination=self.workspace / "large-assets",
                 )
 
-    def test_prepares_pages_site_with_direct_and_cdn_links(self):
+    def test_prepares_pages_site_with_pages_links(self):
         assets = self.workspace / "release-assets"
         assets.mkdir()
         (assets / "result.txt").write_text("Demo,http://example.com\n", encoding="utf-8")
@@ -107,7 +106,6 @@ class PublishResultsTests(unittest.TestCase):
             assets_directory=assets,
             destination=site,
             pages_base_url="https://owner.github.io/repository/",
-            cdn_url="https://cdn.example.com/",
         )
 
         self.assertEqual(
@@ -115,26 +113,18 @@ class PublishResultsTests(unittest.TestCase):
             {"result.txt", "result.m3u", "epg.gz", "index.html"},
         )
         self.assertEqual(result["pages_base_url"], "https://owner.github.io/repository")
-        self.assertEqual(
-            result["public_base_url"],
-            "https://cdn.example.com/https://owner.github.io/repository",
-        )
         index = (site / "index.html").read_text(encoding="utf-8")
+        self.assertIn("GitHub Pages 链接 / Pages links", index)
         self.assertIn("https://owner.github.io/repository/result.m3u", index)
-        self.assertIn(
-            "https://cdn.example.com/https://owner.github.io/repository/result.m3u",
-            index,
-        )
-
-    def test_pages_public_base_url_falls_back_to_direct_url(self):
-        self.assertEqual(
-            build_public_base_url("https://owner.github.io/repository/"),
-            "https://owner.github.io/repository",
-        )
+        self.assertNotIn("CDN accelerated links", index)
 
     def test_rejects_invalid_pages_url(self):
         with self.assertRaisesRegex(ValueError, "absolute HTTP"):
-            build_public_base_url("owner.github.io/repository")
+            prepare_pages_site(
+                assets_directory=self.output,
+                destination=self.workspace / "pages-site",
+                pages_base_url="owner.github.io/repository",
+            )
 
     def test_rejects_oversized_pages_site(self):
         assets = self.workspace / "release-assets"
@@ -167,6 +157,9 @@ class PublishWorkflowTests(unittest.TestCase):
         self.assertIn("actions/upload-pages-artifact@v4", workflow)
         self.assertIn("actions/deploy-pages@v4", workflow)
         self.assertNotIn("gh-pages", workflow)
+        self.assertNotIn("--cdn-url", workflow)
+        self.assertNotIn("public_base_url", workflow)
+        self.assertNotIn("CDN M3U", workflow)
 
     def test_generated_output_is_ignored_by_git(self):
         ignore_patterns = Path(".gitignore").read_text(encoding="utf-8").splitlines()

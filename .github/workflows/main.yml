@@ -89,18 +89,9 @@ jobs:
         env:
           PAGES_BASE_URL: ${{ steps.pages.outputs.base_url }}
         run: |
-          cdn_url="$(pipenv run python -c 'from utils.config import config; print(config.cdn_url)')"
-          public_base_url="$(
-            pipenv run python -c \
-              'import sys; from scripts.publish_results import build_public_base_url; print(build_public_base_url(sys.argv[1], sys.argv[2]))' \
-              "$PAGES_BASE_URL" "$cdn_url"
-          )"
-          {
-            echo "pages_base_url=${PAGES_BASE_URL%/}"
-            echo "public_base_url=$public_base_url"
-            echo "cdn_url=$cdn_url"
-          } >> "$GITHUB_OUTPUT"
-          IPTV_API_ARTIFACT_BASE_URL="$public_base_url" pipenv run dev
+          pages_base_url="${PAGES_BASE_URL%/}"
+          echo "pages_base_url=$pages_base_url" >> "$GITHUB_OUTPUT"
+          IPTV_API_ARTIFACT_BASE_URL="$pages_base_url" pipenv run dev
 
       - name: Prepare public release assets
         id: assets
@@ -110,8 +101,7 @@ jobs:
             --final-file "$final_file" \
             --destination release-assets \
             --pages-destination pages-site \
-            --pages-base-url "${{ steps.generate.outputs.pages_base_url }}" \
-            --cdn-url "${{ steps.generate.outputs.cdn_url }}"
+            --pages-base-url "${{ steps.generate.outputs.pages_base_url }}"
           echo "final_file=$final_file" >> "$GITHUB_OUTPUT"
 
       - name: Upload GitHub Pages artifact
@@ -163,16 +153,11 @@ jobs:
       - name: Add subscription links to summary
         env:
           PAGES_BASE: ${{ steps.generate.outputs.pages_base_url }}
-          PUBLIC_BASE: ${{ steps.generate.outputs.public_base_url }}
           RELEASE_BASE: https://github.com/${{ github.repository }}/releases/download/playlist-latest
         run: |
           {
             echo "### Published playlist"
             echo
-            if [[ "$PUBLIC_BASE" != "$PAGES_BASE" ]]; then
-              echo "- CDN M3U: $PUBLIC_BASE/result.m3u"
-              echo "- CDN TXT: $PUBLIC_BASE/result.txt"
-            fi
             echo "- Pages M3U: $PAGES_BASE/result.m3u"
             echo "- Pages TXT: $PAGES_BASE/result.txt"
             if [[ -f release-assets/result.m3u ]]; then
@@ -180,9 +165,6 @@ jobs:
             fi
             echo "- Release TXT: $RELEASE_BASE/result.txt"
             if [[ -f release-assets/epg.gz ]]; then
-              if [[ "$PUBLIC_BASE" != "$PAGES_BASE" ]]; then
-                echo "- CDN EPG: $PUBLIC_BASE/epg.gz"
-              fi
               echo "- Pages EPG: $PAGES_BASE/epg.gz"
               echo "- Release EPG: $RELEASE_BASE/epg.gz"
             fi
