@@ -83,10 +83,6 @@
 
 ## Sponsors
 
-| Sponsor | Service                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
-|:---:|:---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| <a href="https://helodata.com?ref=iptvapi1"><img src="./docs/images/helodata.png" alt="Helodata" width="150"></a> | <p align="center"><a href="https://helodata.com?ref=iptvapi1"><img src="./docs/images/helodata-banner-en.png" alt="Helodata global proxy network" width="720"></a></p><a href="https://helodata.com?ref=iptvapi1"><strong>Helodata</strong></a> provides global proxy infrastructure covering 195+ countries and regions, with 80M+ ethically sourced residential IPs and support for Residential, ISP, Mobile, and Datacenter proxies, delivering stable and reliable data access for AI, web scraping, and automation applications.Use code <strong><code>iptvapi</code></strong> for an exclusive discount.             |
-
 <p align="center">
   <a href="mailto:360996299@qq.com?subject=Become%20a%20sponsor">Become a sponsor</a>
 </p>

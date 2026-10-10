@@ -83,10 +83,6 @@
 
 ## 赞助商
 
-| 赞助商 | 服务介绍                                                                                                                                                                                                                                                                                                                                                              |
-|:---:|:------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| <a href="https://helodata.com?ref=iptvapi1"><img src="./docs/images/helodata.png" alt="Helodata" width="150"></a> | <p align="center"><a href="https://helodata.com?ref=iptvapi1"><img src="./docs/images/helodata-banner.png" alt="Helodata 全球代理网络" width="720"></a></p><a href="https://helodata.com?ref=iptvapi1"><strong>Helodata</strong></a> 提供全球代理基础设施，覆盖 195+国家和地区，拥有8000万+ 合规授权住宅 IP，并支持住宅、ISP、移动及数据中心代理等，为 AI、爬虫与自动化应用提供稳定可靠的数据访问。使用优惠码 <strong><code>iptvapi</code></strong> 可享专属折扣。                     |
-
 <p align="center">
   <a href="mailto:360996299@qq.com?subject=%E6%88%90%E4%B8%BA%E8%B5%9E%E5%8A%A9%E5%95%86">成为赞助商</a>
 </p>
