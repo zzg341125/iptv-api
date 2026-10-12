@@ -315,7 +315,7 @@ class NavigationStatusIndicatorTests(unittest.TestCase):
         self.assertEqual(page.changelog_button.text(), "查看更新日志")
         dialog = ChangelogDialog(str(page.info.get("version")), page)
         self.addCleanup(dialog.deleteLater)
-        self.assertIn("v3.0.0", dialog.viewer.toPlainText())
+        self.assertIn(f"v{page.info['version']}", dialog.viewer.toPlainText())
 
     def test_update_install_dialog_tracks_app_language_and_theme(self):
         language = get_language()
