@@ -73,7 +73,3 @@ TXT is the base output. M3U, EPG, screenshots, and history cache depend on confi
 | Configuration precedence and stage settings | [How configuration shapes a run](./config_en.md#how-configuration-shapes-a-run) |
 | Generation, Release publication, and Pages deployment order | [Workflow generation and publication](./tutorial_en.md#workflow-generation-and-publication) |
 | Playback requests, Flask, FFmpeg, RTMP, and HLS | [Streaming requests and media flow](./tutorial_en.md#streaming-requests-and-media-flow) |
-
-The diagrams are scalable SVGs with editable text and paths under [images/architecture](./images/architecture/). Blue indicates entry points and control, purple indicates update and background processing, green indicates results or media, and amber indicates supporting dependencies. Solid arrows show main data or call direction; dashed arrows are explained in each diagram.
-
-Each diagram has Chinese and English versions in both themes: `*-zh.svg` / `*-en.svg` are light, and `*-zh-dark.svg` / `*-en-dark.svg` are dark. Documents use `<picture>` and `prefers-color-scheme` to select the theme automatically. Readers without theme selection fall back to the light image. Keep both languages, both themes, and their descriptions synchronized when changing a flow.
