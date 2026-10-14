@@ -12,6 +12,20 @@
 > the `[Settings]` section header. Matching environment variables can also override these values. An unset or empty
 > `PUBLIC_URL` does not override `public_url` in the configuration file.
 
+## How configuration shapes a run
+
+Defaults, personal overrides, and environment variables are merged in that order, with later values taking precedence. The GUI Settings page writes parameter overrides to `config/user_config.ini`. An empty `PUBLIC_URL` does not clear the file value.
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="./images/architecture/configuration-en-dark.svg">
+  <source media="(prefers-color-scheme: light)" srcset="./images/architecture/configuration-en.svg">
+  <img src="./images/architecture/configuration-en.svg" alt="How configuration shapes a run" width="100%">
+</picture>
+
+Choose source and test modes before tuning filters and exports; configure service and streaming dependencies when needed. Scheduling options apply to GUI, CLI, and Docker. Actions is triggered by its workflow. See [Architecture and Runtime Flow](./architecture_en.md) for stage responsibilities.
+
+## Parameter reference
+
 | Configuration Item       | Description                                                                                                                                                                                                                                                                                                                                 | Default Value                            |
 |:-------------------------|:--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|:-----------------------------------------|
 | open_update              | Enable updates, used to control whether to update interfaces. If disabled, all working modes (getting interfaces and speed tests) stop.                                                                                                                                                                                                     | True                                     |

@@ -64,6 +64,7 @@
 <summary><strong>Contents</strong></summary>
 
 - [✅ Core Features](#core-features)
+- [🧭 Architecture and Runtime Flow](#architecture-and-runtime-flow)
 - [⚙️ Configuration](#config)
 - [🚀 Quick Start](#quick-start)
     - [Configuration and Results Directory](#configuration-and-results-directory)
@@ -107,6 +108,18 @@
 | **Pause&nbsp;and&nbsp;resume**     |    ✅    | Pause a desktop update and continue from its current progress                                                                                               |
 | **Multi-platform&nbsp;deployment** |    ✅    | Workflows, CLI, GUI, Docker (amd64/arm64/arm v7)                                                                                                            |
 | **More&nbsp;features**             |    ✨    | See [Configuration](#config) section for details                                                                                                            |
+
+## Architecture and Runtime Flow
+
+The desktop GUI, command line, Docker, and GitHub Actions share one update engine: load configuration and channel templates, fetch and match candidates, apply the selected test mode, and export playlists and related data. Each runtime handles its own triggers and result delivery.
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="./docs/images/architecture/overview-en-dark.svg">
+  <source media="(prefers-color-scheme: light)" srcset="./docs/images/architecture/overview-en.svg">
+  <img src="./docs/images/architecture/overview-en.svg" alt="Runtime entry points, shared update engine, and result delivery" width="100%">
+</picture>
+
+Local results can be read by the GUI or directly from files, or served by a separate HTTP service. GitHub Actions publishes results to Pages and Releases. On-demand streaming depends on FFmpeg and Nginx with RTMP support. See the [architecture guide](./docs/architecture_en.md) for update stages and desktop dependencies, and the [tutorial](./docs/tutorial_en.md) for deployment and streaming diagrams.
 
 ## Config
 

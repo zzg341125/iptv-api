@@ -13,6 +13,7 @@
 <details open>
 <summary><strong>目录</strong></summary>
 
+- [程序运行流程](#程序运行流程)
 - [工作流部署](#工作流部署)
 - [命令行](#命令行)
 - [GUI 软件](#gui-软件)
@@ -20,6 +21,18 @@
   - [推流使用教程](#推流使用教程)
 
 </details>
+
+## 程序运行流程
+
+不同部署方式共用以下更新流程。先准备模板与数据源，再匹配频道、按模式测速和生成结果；EPG 独立获取与输出。界面和后台组件的依赖关系见[架构文档](./architecture.md)。
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="./images/architecture/pipeline-zh-dark.svg">
+  <source media="(prefers-color-scheme: light)" srcset="./images/architecture/pipeline-zh.svg">
+  <img src="./images/architecture/pipeline-zh.svg" alt="程序运行流程" width="100%">
+</picture>
+
+`quick` 达标后停止本频道测速，`full` 测试全部候选，`manual` 仅采集候选并在 GUI 手动测速。开启订阅 EPG 提取时先读取订阅，再获取节目单；否则二者可并发。
 
 ## 工作流部署
 
@@ -30,6 +43,16 @@
 > [!IMPORTANT]
 > GitHub Actions 资源有限，工作流只能手动触发。生成结果通过 Pages Artifact 和每次运行独立的预发布版发布，不会提交到 Git，也不会创建 `gh-pages` 分支。
 > 如果需要频繁更新或定时执行，请使用 Docker、命令行、GUI 或外部对象存储。
+
+### 工作流生成与发布流程
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="./images/architecture/workflow-zh-dark.svg">
+  <source media="(prefers-color-scheme: light)" srcset="./images/architecture/workflow-zh.svg">
+  <img src="./images/architecture/workflow-zh.svg" alt="工作流生成与发布流程" width="100%">
+</picture>
+
+`generate` 准备 Pages 与 Release 两份发布产物；`publish-release` 创建本次运行的播放列表预发布版；`deploy-pages` 等待生成和 Release 发布成功后部署页面。Pages 提供订阅与预览，页面中的下载按钮指向本次 Release。此处的 Release 与桌面软件更新安装包相互独立。
 
 ### 进入IPTV-API项目
 
@@ -356,6 +379,16 @@ pipenv run service
   </details>
 </div>
 
+### 桌面界面与组件依赖
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="./images/architecture/gui-zh-dark.svg">
+  <source media="(prefers-color-scheme: light)" srcset="./images/architecture/gui-zh.svg">
+  <img src="./images/architecture/gui-zh.svg" alt="桌面界面与组件依赖" width="100%">
+</picture>
+
+`MainWindow` 统一连接页面与控制器：更新任务在 `QThread` 中执行，频道手动测速与截图由独立队列处理，HTTP 服务在独立进程中运行；页面通过信号及 SQLite、配置和日志文件刷新状态。[架构文档](./architecture.md#桌面页面与组件依赖)列出了各页面的数据与操作依赖。
+
 在项目目录安装依赖并启动：
 
 ```shell
@@ -494,6 +527,16 @@ Docker 中启用推流很简单——只需做少量配置并将需要推流的�
 > 请仅用于你有明确授权的内容、个人自有内容或封闭环境的技术测试，不要用于未经授权的公开转播。
 
 下面以两种常见方式说明：订阅源推流（在线源）和本地视频推流（上传视频文件）。
+
+#### 推流请求与媒体链路
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="./images/architecture/streaming-zh-dark.svg">
+  <source media="(prefers-color-scheme: light)" srcset="./images/architecture/streaming-zh.svg">
+  <img src="./images/architecture/streaming-zh.svg" alt="推流请求与媒体链路" width="100%">
+</picture>
+
+播放器首次请求 `/hls/{id}.m3u8` 时，Nginx 转发到 Flask 的 `/hls_proxy/{id}`。服务查询频道源，按需启动或复用 FFmpeg 推流；FFmpeg 读取在线接口或本地视频，以复制或转码方式输出 RTMP，Nginx 再生成 HLS。播放列表经 Flask 返回，TS 分片由 Nginx 直接提供；空闲超时和并发上限负责控制资源占用。
 
 #### 1. 启动前准备（以 Docker Compose 部署为例）
 

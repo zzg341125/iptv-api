@@ -11,6 +11,7 @@
 | 文档 | 内容 |
 |:---|:---|
 | [项目说明](../README.md) | 功能概览、快速上手、部署入口、免责声明与许可证 |
+| [架构与运行流程](./architecture.md) | 运行入口、共享更新流程、桌面组件依赖、部署与播放链路 |
 | [使用教程](./tutorial.md) | 工作流、命令行、GUI、Docker 与推流的完整操作步骤 |
 | [配置参数](./config.md) | `config/config.ini` 的全部配置项、说明与默认值 |
 | [更新日志](../CHANGELOG.md) | 版本更新、功能变化与问题修复 |
@@ -32,6 +33,7 @@
 | Document | Contents |
 |:---|:---|
 | [Project overview](../README_en.md) | Feature overview, quick start, deployment entry points, disclaimer, and license |
+| [Architecture and runtime flow](./architecture_en.md) | Runtime entry points, shared update flow, desktop dependencies, deployment, and playback paths |
 | [Tutorial](./tutorial_en.md) | Complete steps for GitHub Actions, command line, GUI, Docker, and streaming |
 | [Configuration](./config_en.md) | Every `config/config.ini` option with its description and default |
 | [Changelog](../CHANGELOG.md) | Releases, feature changes, and fixes |

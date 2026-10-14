@@ -14,6 +14,7 @@
 <details open>
 <summary><strong>Contents</strong></summary>
 
+- [Program execution flow](#program-execution-flow)
 - [Workflow deployment](#workflow-deployment)
 - [Command Line](#command-line)
 - [GUI Software](#gui-software)
@@ -21,6 +22,18 @@
   - [Streaming Usage Tutorial](#streaming-usage-tutorial)
 
 </details>
+
+## Program execution flow
+
+All runtimes share the update flow below: prepare templates and sources, match channels, apply the test mode, and export results. EPG is fetched and written separately. See the [architecture guide](./architecture_en.md) for UI and background dependencies.
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="./images/architecture/pipeline-en-dark.svg">
+  <source media="(prefers-color-scheme: light)" srcset="./images/architecture/pipeline-en.svg">
+  <img src="./images/architecture/pipeline-en.svg" alt="Program execution flow" width="100%">
+</picture>
+
+`quick` stops at the channel target, `full` tests all candidates, and `manual` collects candidates for GUI retesting. Source EPG extraction fetches subscriptions before EPG; otherwise both can run concurrently.
 
 ## Workflow deployment
 
@@ -32,6 +45,16 @@ Use GitHub Actions to generate results manually, serve player subscriptions from
 > Because GitHub resources are limited, the workflow can only be triggered manually. Generated results are deployed
 > through a Pages artifact and a separate prerelease for every run. They are not committed to Git, and no `gh-pages`
 > branch is created. For frequent or scheduled runs, use Docker, the command line, the GUI, or external object storage.
+
+### Workflow generation and publication
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="./images/architecture/workflow-en-dark.svg">
+  <source media="(prefers-color-scheme: light)" srcset="./images/architecture/workflow-en.svg">
+  <img src="./images/architecture/workflow-en.svg" alt="Workflow generation and publication" width="100%">
+</picture>
+
+`generate` prepares Pages and Release artifacts. `publish-release` creates the playlist prerelease for this run. `deploy-pages` waits for generation and Release publication to succeed before deploying. Pages provides subscriptions and previews; its Download buttons point to this Release. These playlist Releases are separate from desktop update packages.
 
 ### Enter the IPTV-API Project
 
@@ -396,6 +419,16 @@ The desktop GUI for Windows and macOS provides one-click updates, live progress,
   </details>
 </div>
 
+### Desktop pages and component dependencies
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="./images/architecture/gui-en-dark.svg">
+  <source media="(prefers-color-scheme: light)" srcset="./images/architecture/gui-en.svg">
+  <img src="./images/architecture/gui-en.svg" alt="Desktop pages and component dependencies" width="100%">
+</picture>
+
+`MainWindow` connects pages to controllers. Updates run in a `QThread`, manual retests and screenshots use a separate queue, and the HTTP service runs in its own process. Signals, SQLite, configuration, and log files supply page state. The [architecture guide](./architecture_en.md#desktop-pages-and-dependencies) maps each page to its dependencies.
+
 Install dependencies and start it from the project directory:
 
 ```shell
@@ -536,6 +569,16 @@ common streaming scenarios: subscription (online) sources and local video files.
 
 > [!WARNING]
 > Use this only for content you are authorized to relay or for closed/internal technical testing.
+
+#### Streaming requests and media flow
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="./images/architecture/streaming-en-dark.svg">
+  <source media="(prefers-color-scheme: light)" srcset="./images/architecture/streaming-en.svg">
+  <img src="./images/architecture/streaming-en.svg" alt="Streaming requests and media flow" width="100%">
+</picture>
+
+The first request for `/hls/{id}.m3u8` is proxied by Nginx to Flask at `/hls_proxy/{id}`. The service resolves the source and starts or reuses an FFmpeg stream. FFmpeg reads the online URL or local video, copies or transcodes it to RTMP, and Nginx generates HLS. Flask returns the playlist; Nginx serves TS segments directly. Idle timeouts and concurrency limits control resource use.
 
 #### 1. Preparations before start (Docker Compose example)
 
